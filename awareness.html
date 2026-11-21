@@ -1,0 +1,879 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Awareness Training Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+#aw-app {
+  --bg:#0b1120;
+  --panel:#121d30;
+  --border:#243550;
+  --text:#e8eef8;
+  --muted:#93a6bf;
+  --blue:#3b82f6;
+  color:var(--text);
+  padding:25px 0 45px;
+}
+#aw-app * { box-sizing:border-box; }
+#aw-app .aw-wrap { max-width:1250px; margin:auto; padding:0 20px; }
+#aw-app h2,#aw-app h3,#aw-app h4 { margin-top:0; }
+#aw-app button { cursor:pointer; font:inherit; }
+#aw-app .aw-top {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:15px; margin-bottom:22px;
+}
+#aw-app .aw-top h2 { font-size:29px; margin-bottom:6px; }
+#aw-app .aw-top p { color:var(--muted); margin:0; }
+#aw-app .aw-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:20px;
+}
+#aw-app .aw-muted { color:var(--muted); }
+#aw-app .aw-stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px;
+}
+#aw-app .aw-stat {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:13px; padding:18px;
+}
+#aw-app .aw-stat-label { color:var(--muted); font-size:13px; }
+#aw-app .aw-stat-value { font-size:30px; font-weight:800; margin-top:8px; }
+#aw-app .aw-stat-icon { float:right; font-size:22px; }
+#aw-app .aw-stat-foot { color:var(--muted); font-size:12px; margin-top:7px; }
+#aw-app .aw-hero {
+  background:linear-gradient(120deg,#13294a,#153765,#1b477b);
+  border:1px solid #2f5f98; border-radius:15px; padding:25px;
+  margin-bottom:20px;
+}
+#aw-app .aw-hero h3 { font-size:23px; margin-bottom:8px; }
+#aw-app .aw-hero p { color:#d2e2f8; line-height:1.7; margin:0; }
+#aw-app .aw-progress-track {
+  height:10px; border-radius:20px; background:#243550;
+  overflow:hidden; margin-top:14px;
+}
+#aw-app .aw-progress-fill {
+  height:100%; background:#3b82f6; border-radius:20px;
+  transition:width .3s;
+}
+#aw-app .aw-section { margin-top:22px; }
+#aw-app .aw-section-title { margin-bottom:5px; font-size:19px; }
+#aw-app .aw-section-sub { color:var(--muted); font-size:12px; margin:0 0 16px; }
+#aw-app .aw-modules {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;
+}
+#aw-app .aw-module {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:13px; padding:18px; display:flex; flex-direction:column;
+}
+#aw-app .aw-module-icon { font-size:27px; margin-bottom:12px; }
+#aw-app .aw-module h4 { font-size:16px; margin-bottom:8px; }
+#aw-app .aw-module p { font-size:12px; color:var(--muted); line-height:1.6; flex:1; }
+#aw-app .aw-module-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; flex-wrap:wrap; margin-top:12px;
+}
+#aw-app .aw-pill {
+  border-radius:20px; padding:5px 9px;
+  font-size:11px; font-weight:700;
+}
+#aw-app .aw-done { background:#123d2b; color:#86efac; }
+#aw-app .aw-pending { background:#17365c; color:#93c5fd; }
+#aw-app .aw-btn {
+  border:1px solid var(--border); background:#18263d;
+  color:var(--text); padding:10px 14px; border-radius:9px;
+  font-weight:600;
+}
+#aw-app .aw-btn:hover { filter:brightness(1.15); }
+#aw-app .aw-primary { background:#2563eb; border-color:#3b82f6; }
+#aw-app .aw-reset { background:#451e2a; border-color:#793145; color:#fecdd3; }
+#aw-app .aw-grid2 {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px;
+}
+#aw-app .aw-lesson {
+  display:none; margin-top:20px;
+}
+#aw-app .aw-lesson.aw-visible { display:block; }
+#aw-app .aw-lesson-content { line-height:1.75; font-size:14px; }
+#aw-app .aw-lesson-content h4 { margin-top:20px; }
+#aw-app .aw-lesson-content ul { padding-left:20px; }
+#aw-app .aw-lesson-content li { margin-bottom:8px; }
+#aw-app .aw-tip {
+  background:#172438; border:1px solid var(--border);
+  border-radius:10px; padding:13px; margin-top:15px;
+  font-size:13px; line-height:1.7;
+}
+#aw-app .aw-quiz-question {
+  background:#0e192b; border:1px solid var(--border);
+  padding:16px; border-radius:10px; margin-bottom:13px;
+}
+#aw-app .aw-quiz-question h4 { font-size:14px; margin-bottom:12px; }
+#aw-app .aw-option {
+  display:flex; align-items:flex-start; gap:9px;
+  border:1px solid var(--border); border-radius:8px;
+  padding:11px; margin:8px 0; cursor:pointer;
+  font-size:13px; line-height:1.5;
+}
+#aw-app .aw-option:hover { border-color:#3b82f6; background:#172438; }
+#aw-app .aw-option input { margin-top:3px; accent-color:#3b82f6; }
+#aw-app .aw-feedback {
+  display:none; margin-top:10px; border-radius:8px;
+  padding:11px; font-size:12px; line-height:1.6;
+}
+#aw-app .aw-feedback.aw-show { display:block; }
+#aw-app .aw-correct { background:#123d2b; color:#86efac; }
+#aw-app .aw-wrong { background:#451e2a; color:#fecdd3; }
+#aw-app .aw-result {
+  display:none; margin-top:18px; padding:20px;
+  background:#172438; border:1px solid var(--border); border-radius:12px;
+}
+#aw-app .aw-result.aw-show { display:block; }
+#aw-app .aw-result-score { font-size:32px; font-weight:800; margin:8px 0; }
+#aw-app .aw-phish {
+  border:1px solid var(--border); border-radius:12px;
+  background:#0e192b; padding:18px;
+}
+#aw-app .aw-email-head {
+  font-size:12px; color:var(--muted); line-height:1.8;
+  border-bottom:1px solid var(--border); padding-bottom:12px;
+}
+#aw-app .aw-email-body { line-height:1.7; font-size:13px; margin-top:15px; }
+#aw-app .aw-phish-options {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;
+}
+#aw-app .aw-phish-result {
+  display:none; margin-top:15px; border-radius:10px;
+  padding:14px; font-size:13px; line-height:1.7;
+}
+#aw-app .aw-phish-result.aw-show { display:block; }
+#aw-app .aw-phish-result.aw-good { background:#123d2b; color:#86efac; }
+#aw-app .aw-phish-result.aw-bad { background:#451e2a; color:#fecdd3; }
+#aw-app .aw-cert {
+  text-align:center; padding:25px; border:1px dashed #3b82f6;
+  border-radius:13px; background:#0e192b;
+}
+#aw-app .aw-cert-icon { font-size:40px; }
+#aw-app .aw-cert h3 { margin:10px 0; }
+#aw-app .aw-empty { color:var(--muted); padding:15px 0; }
+#aw-app .aw-note {
+  background:#172438; border:1px solid var(--border);
+  border-radius:9px; padding:13px; color:var(--muted);
+  font-size:12px; margin-top:20px; line-height:1.6;
+}
+@media(max-width:950px) {
+  #aw-app .aw-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #aw-app .aw-modules { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #aw-app .aw-grid2 { grid-template-columns:1fr; }
+}
+@media(max-width:600px) {
+  #aw-app .aw-wrap { padding:0 13px; }
+  #aw-app .aw-top h2 { font-size:24px; }
+  #aw-app .aw-stat { padding:13px; }
+  #aw-app .aw-stat-value { font-size:24px; }
+  #aw-app .aw-modules { grid-template-columns:1fr; }
+  #aw-app .aw-panel { padding:14px; }
+  #aw-app .aw-phish-options { grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛡 Cybersecurity Policy & Incident Response</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="policies.html">Policies</a>
+    <a href="incident.html">Incident Response</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="awareness.html">Awareness</a>
+    <a href="risk.html">Risk Assessment</a>
+  </nav>
+</header>
+
+<main id="aw-app">
+<div class="aw-wrap">
+
+  <div class="aw-top">
+    <div>
+      <h2>🎓 Security Awareness Training Center</h2>
+      <p>Learn, practice and strengthen your cybersecurity knowledge.</p>
+    </div>
+    <button class="aw-btn aw-reset" id="aw-reset">Reset Progress</button>
+  </div>
+
+  <section class="aw-hero">
+    <h3>🛡 Build Your Security Skills</h3>
+    <p>Complete training modules, test your knowledge, and learn how to recognize common cyber threats. Your progress is saved automatically in this browser.</p>
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px;font-size:13px;">
+      <strong id="aw-progress-text">0% Completed</strong>
+      <span id="aw-progress-count">0 of 6 modules completed</span>
+    </div>
+    <div class="aw-progress-track">
+      <div class="aw-progress-fill" id="aw-progress-bar" style="width:0%"></div>
+    </div>
+  </section>
+
+  <!-- STATISTICS -->
+  <section class="aw-stats">
+    <div class="aw-stat">
+      <span class="aw-stat-icon">📚</span>
+      <div class="aw-stat-label">Training Modules</div>
+      <div class="aw-stat-value">6</div>
+      <div class="aw-stat-foot">Available learning topics</div>
+    </div>
+    <div class="aw-stat">
+      <span class="aw-stat-icon">✅</span>
+      <div class="aw-stat-label">Completed</div>
+      <div class="aw-stat-value" id="aw-completed">0</div>
+      <div class="aw-stat-foot">Modules finished</div>
+    </div>
+    <div class="aw-stat">
+      <span class="aw-stat-icon">🧠</span>
+      <div class="aw-stat-label">Quiz Best Score</div>
+      <div class="aw-stat-value" id="aw-best">0%</div>
+      <div class="aw-stat-foot">Highest quiz result</div>
+    </div>
+    <div class="aw-stat">
+      <span class="aw-stat-icon">🏆</span>
+      <div class="aw-stat-label">Training Status</div>
+      <div class="aw-stat-value" id="aw-status" style="font-size:20px;">In Progress</div>
+      <div class="aw-stat-foot">Learning journey</div>
+    </div>
+  </section>
+
+  <!-- MODULES -->
+  <section class="aw-section">
+    <h3 class="aw-section-title">📚 Training Modules</h3>
+    <p class="aw-section-sub">Select a module to start learning. Complete each module to track your progress.</p>
+    <div class="aw-modules" id="aw-modules"></div>
+  </section>
+
+  <!-- LESSON VIEW -->
+  <section class="aw-panel aw-lesson" id="aw-lesson">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+      <h3 id="aw-lesson-title">Training Lesson</h3>
+      <button class="aw-btn" id="aw-close-lesson">Close</button>
+    </div>
+    <div class="aw-lesson-content" id="aw-lesson-content"></div>
+    <button class="aw-btn aw-primary" id="aw-complete-lesson" style="margin-top:18px;">✓ Mark Module Complete</button>
+  </section>
+
+  <!-- PHISHING SIMULATION -->
+  <section class="aw-section aw-panel">
+    <h3 class="aw-section-title">🎣 Phishing Awareness Simulator</h3>
+    <p class="aw-section-sub">Practice identifying suspicious emails in this safe, fictional simulation.</p>
+
+    <div class="aw-phish">
+      <div class="aw-email-head">
+        <strong>From:</strong> IT Support &lt;support-security@example.invalid&gt;<br>
+        <strong>Subject:</strong> URGENT — Your account will be disabled in 30 minutes!<br>
+        <strong>Attachment:</strong> None
+      </div>
+      <div class="aw-email-body">
+        <p>Hello User,</p>
+        <p>Your account has been flagged. You must verify your password immediately or your account will be permanently suspended.</p>
+        <p>Click the link below to restore access:</p>
+        <div style="padding:12px;background:#172438;border-radius:8px;word-break:break-all;color:#93c5fd;">
+          <u>https://account-verify.example.invalid/login</u>
+        </div>
+        <p>Failure to act immediately will result in account termination.</p>
+        <p>Regards,<br>IT Security Team</p>
+      </div>
+    </div>
+
+    <div class="aw-phish-options">
+      <button class="aw-btn aw-primary" id="aw-phish-report">🚨 Report as Phishing</button>
+      <button class="aw-btn" id="aw-phish-trust">✅ Trust This Email</button>
+    </div>
+
+    <div class="aw-phish-result" id="aw-phish-result"></div>
+    <button class="aw-btn" id="aw-phish-retry" style="display:none;margin-top:12px;">Try Again</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="aw-section aw-panel" id="aw-quiz">
+    <h3 class="aw-section-title">🧠 Cybersecurity Knowledge Quiz</h3>
+    <p class="aw-section-sub">Answer all 10 questions. Your score and feedback will appear when you submit.</p>
+
+    <form id="aw-quiz-form"></form>
+
+    <button class="aw-btn aw-primary" id="aw-submit-quiz" style="margin-top:12px;">Submit Quiz</button>
+    <button class="aw-btn" id="aw-retry-quiz" style="display:none;margin-top:12px;">Retake Quiz</button>
+
+    <div class="aw-result" id="aw-quiz-result"></div>
+  </section>
+
+  <!-- CERTIFICATE -->
+  <section class="aw-section aw-panel">
+    <h3 class="aw-section-title">🏆 Training Achievement</h3>
+    <p class="aw-section-sub">Complete all training modules and achieve at least 80% in the quiz.</p>
+    <div class="aw-cert" id="aw-certificate">
+      <div class="aw-cert-icon">🔒</div>
+      <h3>Certificate Locked</h3>
+      <p class="aw-muted">Complete all 6 modules and score at least 80% in the quiz to unlock your training achievement.</p>
+    </div>
+  </section>
+
+  <div class="aw-note">
+    ⚠️ Training environment: This phishing simulation is fictional and does not send emails, collect passwords, visit external links or affect any real accounts. Training progress is stored locally in your browser.
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <p>© 2026 Cybersecurity Policy & Incident Response Project</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_KEY = "cyber_awareness_training_v1";
+  const $ = id => document.getElementById(id);
+
+  const modules = [
+    {
+      id:"passwords",
+      icon:"🔐",
+      title:"Password Security",
+      description:"Learn how to create strong passwords, use password managers and protect your accounts.",
+      lesson:`
+        <h4>Why password security matters</h4>
+        <p>Passwords protect email, company systems, personal information and sensitive files. Weak or reused passwords can allow attackers to access multiple accounts.</p>
+        <h4>Best Practices</h4>
+        <ul>
+          <li>Use long, unique passwords for every account.</li>
+          <li>Prefer passphrases that are easy to remember but difficult to guess.</li>
+          <li>Never share passwords with coworkers or anyone claiming to be support.</li>
+          <li>Use a reputable password manager.</li>
+          <li>Enable Multi-Factor Authentication (MFA) whenever possible.</li>
+          <li>Change a password immediately if compromise is suspected.</li>
+        </ul>
+        <div class="aw-tip"><strong>Remember:</strong> A unique password for every service limits the damage if one account is compromised.</div>
+      `
+    },
+    {
+      id:"phishing",
+      icon:"🎣",
+      title:"Phishing Awareness",
+      description:"Recognize suspicious emails, fake websites, unexpected attachments and social engineering.",
+      lesson:`
+        <h4>What is phishing?</h4>
+        <p>Phishing is a deceptive attempt to trick people into revealing sensitive information, clicking malicious links or opening harmful attachments.</p>
+        <h4>Common warning signs</h4>
+        <ul>
+          <li>Unexpected urgency or threats.</li>
+          <li>Requests for passwords or sensitive information.</li>
+          <li>Suspicious sender addresses.</li>
+          <li>Links that do not match the claimed organization.</li>
+          <li>Unexpected attachments.</li>
+          <li>Unusual payment or account requests.</li>
+        </ul>
+        <h4>What should you do?</h4>
+        <ul>
+          <li>Do not click suspicious links or open unexpected attachments.</li>
+          <li>Verify requests using a known contact method.</li>
+          <li>Report suspicious emails to your IT/security team.</li>
+          <li>If you already clicked, report it immediately.</li>
+        </ul>
+        <div class="aw-tip"><strong>Remember:</strong> Urgency is a common manipulation technique. Pause and verify before taking action.</div>
+      `
+    },
+    {
+      id:"mfa",
+      icon:"📱",
+      title:"Multi-Factor Authentication",
+      description:"Understand MFA and why a second verification factor protects your accounts.",
+      lesson:`
+        <h4>What is MFA?</h4>
+        <p>Multi-Factor Authentication requires more than one type of proof to verify your identity.</p>
+        <ul>
+          <li>Something you know — a password or PIN.</li>
+          <li>Something you have — a security key or authenticator device.</li>
+          <li>Something you are — a biometric characteristic.</li>
+        </ul>
+        <h4>Security tips</h4>
+        <ul>
+          <li>Enable MFA on email, banking and important accounts.</li>
+          <li>Never approve an unexpected login prompt.</li>
+          <li>Do not share verification codes.</li>
+          <li>Use phishing-resistant methods when available.</li>
+        </ul>
+        <div class="aw-tip"><strong>Remember:</strong> If you receive an unexpected authentication request, deny it and investigate.</div>
+      `
+    },
+    {
+      id:"devices",
+      icon:"💻",
+      title:"Device & Software Security",
+      description:"Protect computers, phones and applications through updates and secure practices.",
+      lesson:`
+        <h4>Keep devices secure</h4>
+        <ul>
+          <li>Install operating system and application updates promptly.</li>
+          <li>Use approved antivirus or endpoint protection.</li>
+          <li>Lock your screen when leaving your workstation.</li>
+          <li>Do not install unapproved or pirated software.</li>
+          <li>Use secure Wi-Fi and avoid unknown USB devices.</li>
+          <li>Encrypt devices where supported.</li>
+        </ul>
+        <h4>Working remotely</h4>
+        <ul>
+          <li>Use approved VPN services when required.</li>
+          <li>Avoid public computers for sensitive work.</li>
+          <li>Keep work devices physically secure.</li>
+          <li>Report lost or stolen devices immediately.</li>
+        </ul>
+        <div class="aw-tip"><strong>Remember:</strong> Updates help fix vulnerabilities that attackers may exploit.</div>
+      `
+    },
+    {
+      id:"data",
+      icon:"📁",
+      title:"Data Protection",
+      description:"Learn how to handle sensitive information and protect it from accidental exposure.",
+      lesson:`
+        <h4>Protect sensitive data</h4>
+        <ul>
+          <li>Only access information needed for your role.</li>
+          <li>Check recipients before sending emails or files.</li>
+          <li>Use approved storage and sharing tools.</li>
+          <li>Do not share sensitive data in public channels.</li>
+          <li>Follow data retention and disposal rules.</li>
+          <li>Report accidental disclosures quickly.</li>
+        </ul>
+        <h4>Clean desk and screen</h4>
+        <ul>
+          <li>Lock your screen when away.</li>
+          <li>Do not leave sensitive documents unattended.</li>
+          <li>Dispose of confidential documents securely.</li>
+        </ul>
+        <div class="aw-tip"><strong>Remember:</strong> Before sharing information, check what it contains, who will receive it and whether sharing is authorized.</div>
+      `
+    },
+    {
+      id:"incidents",
+      icon:"🚨",
+      title:"Incident Reporting",
+      description:"Know what to do when you encounter a security incident or suspicious activity.",
+      lesson:`
+        <h4>What is a security incident?</h4>
+        <p>An incident may include a compromised account, malware infection, lost device, accidental data exposure or suspicious activity.</p>
+        <h4>What you should do</h4>
+        <ul>
+          <li>Report suspicious activity immediately.</li>
+          <li>Do not delete evidence or suspicious messages.</li>
+          <li>Follow instructions from your security team.</li>
+          <li>Disconnect from the network if instructed or if your incident procedures require it.</li>
+          <li>Record what happened and when.</li>
+          <li>Never hide an incident because of embarrassment or fear.</li>
+        </ul>
+        <h4>If you clicked a suspicious link</h4>
+        <ul>
+          <li>Stop interacting with the suspicious page.</li>
+          <li>Do not enter further information.</li>
+          <li>Report the incident promptly.</li>
+          <li>Follow IT instructions about password changes or device checks.</li>
+        </ul>
+        <div class="aw-tip"><strong>Remember:</strong> Fast reporting can reduce damage and help your organization respond.</div>
+      `
+    }
+  ];
+
+  const questions = [
+    {
+      q:"What is the best way to manage passwords?",
+      options:["Use the same password everywhere","Use unique passwords and a password manager","Share passwords with your team","Use only short passwords"],
+      answer:1,
+      explanation:"Unique passwords and a password manager reduce the impact of compromised accounts."
+    },
+    {
+      q:"You receive an urgent email asking you to verify your password through a link. What should you do?",
+      options:["Click immediately","Reply with your password","Verify the request independently and report suspicious messages","Forward it to everyone"],
+      answer:2,
+      explanation:"Verify through a trusted channel rather than using a suspicious link."
+    },
+    {
+      q:"What does MFA provide?",
+      options:["A second verification factor","Automatic file deletion","Faster internet","Password sharing"],
+      answer:0,
+      explanation:"MFA requires additional proof of identity beyond a single factor."
+    },
+    {
+      q:"What should you do with unexpected attachments?",
+      options:["Open them to see what they contain","Forward them to personal email","Verify their legitimacy before opening","Download them on every device"],
+      answer:2,
+      explanation:"Unexpected attachments may contain malware. Verify before opening."
+    },
+    {
+      q:"Why should software be updated?",
+      options:["To change the wallpaper","To fix bugs and security vulnerabilities","To remove all files","Updates are unnecessary"],
+      answer:1,
+      explanation:"Updates often include important security patches."
+    },
+    {
+      q:"You find a USB drive in the parking lot. What should you do?",
+      options:["Plug it into your work computer","Give it to IT/security without connecting it","Plug it into your personal laptop","Copy its contents"],
+      answer:1,
+      explanation:"Unknown USB devices can be malicious. Give them to authorized security staff."
+    },
+    {
+      q:"What is the safest way to share confidential files?",
+      options:["Public social media","Personal email","Approved secure sharing with authorized recipients","Any file-sharing link"],
+      answer:2,
+      explanation:"Use approved systems and ensure recipients are authorized."
+    },
+    {
+      q:"You receive an unexpected MFA approval request. What should you do?",
+      options:["Approve it","Ignore the request and approve later","Deny it and report it","Share the code with support"],
+      answer:2,
+      explanation:"An unexpected MFA request may indicate someone is attempting to access your account."
+    },
+    {
+      q:"What should you do if you accidentally click a suspicious link?",
+      options:["Hide it","Report immediately and follow security instructions","Continue browsing","Delete all emails"],
+      answer:1,
+      explanation:"Prompt reporting helps security teams investigate and reduce possible damage."
+    },
+    {
+      q:"What is the best response to a suspected security incident?",
+      options:["Wait until tomorrow","Delete evidence","Report promptly and follow incident procedures","Tell nobody"],
+      answer:2,
+      explanation:"Prompt reporting and following procedures help contain security incidents."
+    }
+  ];
+
+  let state = {
+    completed:[],
+    bestScore:0,
+    lastScore:null,
+    quizPassed:false,
+    phishingCorrect:null
+  };
+
+  let currentModule=null;
+
+  function loadState(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if(saved&&typeof saved==="object"){
+        state.completed=Array.isArray(saved.completed)?saved.completed:[];
+        state.bestScore=Number(saved.bestScore)||0;
+        state.lastScore=saved.lastScore??null;
+        state.quizPassed=Boolean(saved.quizPassed);
+        state.phishingCorrect=saved.phishingCorrect??null;
+      }
+    }catch(e){}
+  }
+
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  }
+
+  function renderModules(){
+    const box=$("aw-modules");
+    box.innerHTML="";
+
+    modules.forEach(m=>{
+      const done=state.completed.includes(m.id);
+      const card=document.createElement("div");
+      card.className="aw-module";
+
+      card.innerHTML=`
+        <div class="aw-module-icon">${m.icon}</div>
+        <h4>${m.title}</h4>
+        <p>${m.description}</p>
+        <div class="aw-module-footer">
+          <span class="aw-pill ${done?"aw-done":"aw-pending"}">${done?"COMPLETED":"NOT STARTED"}</span>
+          <button class="aw-btn ${done?"":"aw-primary"}" data-module="${m.id}">
+            ${done?"Review Module":"Start Learning"}
+          </button>
+        </div>
+      `;
+
+      box.appendChild(card);
+    });
+
+    box.querySelectorAll("[data-module]").forEach(btn=>{
+      btn.addEventListener("click",()=>openModule(btn.dataset.module));
+    });
+  }
+
+  function renderStats(){
+    const count=state.completed.length;
+    const percent=Math.round(count/modules.length*100);
+
+    $("aw-completed").textContent=count;
+    $("aw-best").textContent=state.bestScore+"%";
+    $("aw-progress-text").textContent=percent+"% Completed";
+    $("aw-progress-count").textContent=count+" of "+modules.length+" modules completed";
+    $("aw-progress-bar").style.width=percent+"%";
+
+    if(count===modules.length&&state.quizPassed){
+      $("aw-status").textContent="Certified";
+    }else if(count===0){
+      $("aw-status").textContent="Not Started";
+    }else{
+      $("aw-status").textContent="In Progress";
+    }
+
+    renderCertificate();
+  }
+
+  function openModule(id){
+    const m=modules.find(x=>x.id===id);
+    if(!m)return;
+    currentModule=id;
+
+    $("aw-lesson-title").textContent=m.icon+" "+m.title;
+    $("aw-lesson-content").innerHTML=m.lesson;
+    $("aw-lesson").classList.add("aw-visible");
+    $("aw-lesson").scrollIntoView({behavior:"smooth",block:"start"});
+
+    $("aw-complete-lesson").textContent=
+      state.completed.includes(id)?"✓ Completed — Mark Again":"✓ Mark Module Complete";
+  }
+
+  function completeModule(){
+    if(!currentModule)return;
+
+    if(!state.completed.includes(currentModule)){
+      state.completed.push(currentModule);
+    }
+
+    saveState();
+    renderModules();
+    renderStats();
+
+    $("aw-complete-lesson").textContent="✓ Module Completed";
+  }
+
+  function renderQuiz(){
+    const form=$("aw-quiz-form");
+    form.innerHTML="";
+
+    questions.forEach((q,index)=>{
+      const box=document.createElement("div");
+      box.className="aw-quiz-question";
+      box.innerHTML=`<h4>${index+1}. ${q.q}</h4>`;
+
+      q.options.forEach((option,i)=>{
+        const label=document.createElement("label");
+        label.className="aw-option";
+        label.innerHTML=`
+          <input type="radio" name="aw-q${index}" value="${i}">
+          <span>${option}</span>
+        `;
+        box.appendChild(label);
+      });
+
+      const feedback=document.createElement("div");
+      feedback.className="aw-feedback";
+      feedback.id="aw-feedback-"+index;
+      box.appendChild(feedback);
+
+      form.appendChild(box);
+    });
+  }
+
+  function submitQuiz(){
+    let score=0;
+    let unanswered=0;
+
+    questions.forEach((q,index)=>{
+      const selected=document.querySelector('input[name="aw-q'+index+'"]:checked');
+      const feedback=$("aw-feedback-"+index);
+
+      feedback.classList.add("aw-show");
+
+      if(!selected){
+        unanswered++;
+        feedback.className="aw-feedback aw-show aw-wrong";
+        feedback.textContent="Not answered. "+q.explanation;
+        return;
+      }
+
+      if(Number(selected.value)===q.answer){
+        score++;
+        feedback.className="aw-feedback aw-show aw-correct";
+        feedback.textContent="Correct! "+q.explanation;
+      }else{
+        feedback.className="aw-feedback aw-show aw-wrong";
+        feedback.textContent="Incorrect. "+q.explanation;
+      }
+    });
+
+    if(unanswered>0){
+      alert("Please answer all questions before submitting.");
+      return;
+    }
+
+    const percentage=Math.round(score/questions.length*100);
+    state.lastScore=percentage;
+    state.bestScore=Math.max(state.bestScore,percentage);
+    state.quizPassed=percentage>=80;
+
+    saveState();
+    renderStats();
+
+    $("aw-quiz-result").classList.add("aw-show");
+    $("aw-quiz-result").innerHTML=`
+      <h3>${percentage>=80?"🎉 Excellent Work!":"📚 Keep Practicing!"}</h3>
+      <div class="aw-result-score">${score}/${questions.length} — ${percentage}%</div>
+      <p>${percentage>=80
+        ?"You passed the awareness quiz. Great job demonstrating your security knowledge!"
+        :"You need at least 80% to pass. Review the modules and try again."}</p>
+    `;
+
+    $("aw-submit-quiz").style.display="none";
+    $("aw-retry-quiz").style.display="inline-block";
+  }
+
+  function renderCertificate(){
+    const allDone=state.completed.length===modules.length;
+    const passed=state.quizPassed&&state.bestScore>=80;
+    const unlocked=allDone&&passed;
+
+    if(unlocked){
+      $("aw-certificate").innerHTML=`
+        <div class="aw-cert-icon">🏆</div>
+        <h3>Cybersecurity Awareness Achievement Unlocked!</h3>
+        <p>You have completed all 6 training modules and passed the knowledge quiz.</p>
+        <p><strong>Best Quiz Score: ${state.bestScore}%</strong></p>
+        <button class="aw-btn aw-primary" id="aw-print-cert">🖨 Print Achievement</button>
+      `;
+
+      $("aw-print-cert").addEventListener("click",()=>{
+        const printWindow=window.open("","_blank");
+        if(!printWindow){
+          alert("Allow pop-ups to print your achievement.");
+          return;
+        }
+        printWindow.document.write(`
+          <!DOCTYPE html><html><head><title>Cybersecurity Achievement</title>
+          <style>
+          body{font-family:Arial,sans-serif;text-align:center;padding:50px;color:#111}
+          .cert{border:8px double #245a9b;padding:45px;max-width:800px;margin:auto}
+          h1{color:#245a9b}p{line-height:1.8}
+          </style></head><body>
+          <div class="cert">
+          <h1>🏆 Cybersecurity Awareness Achievement</h1>
+          <h2>Certificate of Completion</h2>
+          <p>This certificate recognizes the completion of all six cybersecurity awareness training modules and the knowledge assessment.</p>
+          <h2>Quiz Score: ${state.bestScore}%</h2>
+          <p>Topics included password security, phishing, MFA, device security, data protection and incident reporting.</p>
+          <p>Date: ${new Date().toLocaleDateString()}</p>
+          </div>
+          <script>window.onload=function(){window.print();};<\/script>
+          </body></html>
+        `);
+        printWindow.document.close();
+      });
+    }else{
+      $("aw-certificate").innerHTML=`
+        <div class="aw-cert-icon">🔒</div>
+        <h3>Certificate Locked</h3>
+        <p class="aw-muted">Complete all 6 training modules and score at least 80% in the quiz to unlock your training achievement.</p>
+        <p><strong>Modules:</strong> ${state.completed.length}/6 completed</p>
+        <p><strong>Best Quiz Score:</strong> ${state.bestScore}%</p>
+      `;
+    }
+  }
+
+  function phishingResult(correct){
+    state.phishingCorrect=correct;
+    saveState();
+
+    const box=$("aw-phish-result");
+    box.classList.add("aw-show");
+
+    if(correct){
+      box.className="aw-phish-result aw-show aw-good";
+      box.innerHTML=`
+        <strong>🎉 Correct! You identified a phishing attempt.</strong>
+        <p>Warning signs included:</p>
+        <ul>
+          <li>Urgent threats and an artificial deadline.</li>
+          <li>Request to verify your password.</li>
+          <li>Suspicious sender and link.</li>
+          <li>Pressure to act before thinking.</li>
+        </ul>
+        <p>The correct action is to avoid the link and report the message using your organization's reporting process.</p>
+      `;
+    }else{
+      box.className="aw-phish-result aw-show aw-bad";
+      box.innerHTML=`
+        <strong>⚠️ This email is a phishing simulation.</strong>
+        <p>It contains urgent threats, asks you to verify your password, and includes a suspicious link.</p>
+        <p>Never use links in unexpected password requests. Verify the message independently and report it.</p>
+      `;
+    }
+
+    $("aw-phish-report").disabled=true;
+    $("aw-phish-trust").disabled=true;
+    $("aw-phish-retry").style.display="inline-block";
+  }
+
+  function retryPhishing(){
+    $("aw-phish-result").className="aw-phish-result";
+    $("aw-phish-result").innerHTML="";
+    $("aw-phish-report").disabled=false;
+    $("aw-phish-trust").disabled=false;
+    $("aw-phish-retry").style.display="none";
+  }
+
+  function retryQuiz(){
+    $("aw-quiz-result").classList.remove("aw-show");
+    $("aw-quiz-result").innerHTML="";
+    $("aw-submit-quiz").style.display="inline-block";
+    $("aw-retry-quiz").style.display="none";
+    renderQuiz();
+    $("aw-quiz").scrollIntoView({behavior:"smooth"});
+  }
+
+  $("aw-close-lesson").addEventListener("click",()=>{
+    $("aw-lesson").classList.remove("aw-visible");
+    currentModule=null;
+  });
+
+  $("aw-complete-lesson").addEventListener("click",completeModule);
+  $("aw-submit-quiz").addEventListener("click",submitQuiz);
+  $("aw-retry-quiz").addEventListener("click",retryQuiz);
+  $("aw-phish-report").addEventListener("click",()=>phishingResult(true));
+  $("aw-phish-trust").addEventListener("click",()=>phishingResult(false));
+  $("aw-phish-retry").addEventListener("click",retryPhishing);
+
+  $("aw-reset").addEventListener("click",()=>{
+    if(!confirm("Reset all awareness training progress, quiz scores and simulation results?"))return;
+    state={
+      completed:[],
+      bestScore:0,
+      lastScore:null,
+      quizPassed:false,
+      phishingCorrect:null
+    };
+    saveState();
+    renderModules();
+    renderStats();
+    retryQuiz();
+    retryPhishing();
+    $("aw-lesson").classList.remove("aw-visible");
+    currentModule=null;
+  });
+
+  loadState();
+  renderModules();
+  renderStats();
+  renderQuiz();
+
+})();
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Settings | Command Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1120;color:#e5e7eb;font-family:Arial,sans-serif}
+#settings{max-width:1300px;margin:auto;padding:30px}
+.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:25px}
+.header h1{margin:0}
+.header p{color:#94a3b8}
+.nav{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:25px}
+.nav a{padding:10px 15px;background:#172235;border:1px solid #26364f;border-radius:9px;color:#cbd5e1;text-decoration:none}
+.nav a:hover,.nav a.active{background:#2563eb;color:white}
+.hero{background:linear-gradient(120deg,#172554,#101a2a);padding:25px;border:1px solid #293b55;border-radius:16px;margin-bottom:25px}
+.hero p{color:#cbd5e1;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}
+.panel{background:#131e30;border:1px solid #26364f;border-radius:14px;padding:22px;margin-bottom:18px}
+.panel h2{margin-top:0;font-size:19px}
+.panel p{color:#94a3b8;font-size:14px;line-height:1.6}
+.setting{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 0;border-bottom:1px solid #29364b}
+.setting:last-child{border-bottom:0}
+.setting strong{display:block;font-size:14px}
+.setting small{display:block;color:#94a3b8;margin-top:5px}
+.toggle{width:48px;height:26px;accent-color:#3b82f6;cursor:pointer}
+.input{width:100%;background:#0b1120;color:white;border:1px solid #34445e;border-radius:8px;padding:11px;margin-top:8px}
+.btn{background:#2563eb;color:white;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;margin-top:10px}
+.btn:hover{background:#1d4ed8}
+.danger{background:#7f1d1d}
+.danger:hover{background:#991b1b}
+.status{padding:12px;border-radius:8px;background:#102e23;color:#86efac;margin-top:12px;display:none}
+.footer{text-align:center;color:#64748b;padding:25px}
+@media(max-width:600px){#settings{padding:15px}.setting{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div id="settings">
+
+<header class="header">
+<div>
+<h1>⚙️ Security Settings</h1>
+<p>Configure and manage your security environment</p>
+</div>
+</header>
+
+<nav class="nav">
+<a href="index.html">Home</a>
+<a href="policies.html">Policies</a>
+<a href="incident.html">Incident Response</a>
+<a href="recovery.html">Recovery</a>
+<a href="awareness.html">Awareness</a>
+<a href="risk.html">Risk Assessment</a>
+<a href="analytics.html">Analytics</a>
+<a href="settings.html" class="active">Settings</a>
+</nav>
+
+<section class="hero">
+<h2>Security Configuration Center</h2>
+<p>Manage dashboard preferences, notification settings, security controls, and local application data. Your preferences are saved in this browser.</p>
+</section>
+
+<div class="grid">
+
+<section class="panel">
+<h2>🔔 Notifications</h2>
+
+<div class="setting">
+<div><strong>Incident Alerts</strong><small>Notify when incidents are recorded</small></div>
+<input class="toggle" type="checkbox" id="incidentAlerts">
+</div>
+
+<div class="setting">
+<div><strong>Risk Alerts</strong><small>Notify about high-risk records</small></div>
+<input class="toggle" type="checkbox" id="riskAlerts">
+</div>
+
+<div class="setting">
+<div><strong>Policy Reminders</strong><small>Enable policy review reminders</small></div>
+<input class="toggle" type="checkbox" id="policyReminders">
+</div>
+</section>
+
+<section class="panel">
+<h2>🛡️ Security Controls</h2>
+
+<div class="setting">
+<div><strong>Session Protection</strong><small>Enable application session protection preference</small></div>
+<input class="toggle" type="checkbox" id="sessionProtection">
+</div>
+
+<div class="setting">
+<div><strong>Audit Logging</strong><small>Enable local activity logging preference</small></div>
+<input class="toggle" type="checkbox" id="auditLogging">
+</div>
+
+<div class="setting">
+<div><strong>Privacy Mode</strong><small>Hide sensitive dashboard information</small></div>
+<input class="toggle" type="checkbox" id="privacyMode">
+</div>
+</section>
+
+<section class="panel">
+<h2>🎨 Dashboard Preferences</h2>
+
+<label for="theme">Dashboard Theme</label>
+<select class="input" id="theme">
+<option value="dark">Dark</option>
+<option value="light">Light</option>
+</select>
+
+<label for="refresh">Dashboard Refresh Preference</label>
+<select class="input" id="refresh">
+<option value="manual">Manual</option>
+<option value="30">30 seconds</option>
+<option value="60">1 minute</option>
+<option value="300">5 minutes</option>
+</select>
+
+<button class="btn" id="saveSettings">Save Preferences</button>
+<div class="status" id="status">Settings saved successfully.</div>
+</section>
+
+<section class="panel">
+<h2>💾 Data Management</h2>
+<p>Your dashboard data is stored locally in your browser. Export a backup or reset selected application data.</p>
+
+<button class="btn" id="exportData">Export Settings Backup</button>
+<br>
+<button class="btn danger" id="resetSettings">Reset Settings</button>
+<div class="status" id="dataStatus"></div>
+</section>
+
+</div>
+
+<footer class="footer">
+Security Command Center · Settings Center
+</footer>
+</div>
+
+<script>
+(function(){
+const ids=["incidentAlerts","riskAlerts","policyReminders","sessionProtection","auditLogging","privacyMode","theme","refresh"];
+const defaults={
+incidentAlerts:true,
+riskAlerts:true,
+policyReminders:true,
+sessionProtection:true,
+auditLogging:true,
+privacyMode:false,
+theme:"dark",
+refresh:"manual"
+};
+
+function load(){
+let saved={};
+try{saved=JSON.parse(localStorage.getItem("cyber_settings_v1"))||{};}catch(e){}
+ids.forEach(id=>{
+const el=document.getElementById(id);
+if(el.type==="checkbox")el.checked=saved[id]??defaults[id];
+else el.value=saved[id]??defaults[id];
+});
+}
+
+function collect(){
+let data={};
+ids.forEach(id=>{
+const el=document.getElementById(id);
+data[id]=el.type==="checkbox"?el.checked:el.value;
+});
+return data;
+}
+
+document.getElementById("saveSettings").onclick=function(){
+localStorage.setItem("cyber_settings_v1",JSON.stringify(collect()));
+document.getElementById("status").style.display="block";
+};
+
+document.getElementById("exportData").onclick=function(){
+const data=JSON.stringify(collect(),null,2);
+const blob=new Blob([data],{type:"application/json"});
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="security-settings-backup.json";
+a.click();
+URL.revokeObjectURL(a.href);
+document.getElementById("dataStatus").style.display="block";
+document.getElementById("dataStatus").textContent="Settings backup exported.";
+};
+
+document.getElementById("resetSettings").onclick=function(){
+if(!confirm("Reset all settings to default?"))return;
+localStorage.removeItem("cyber_settings_v1");
+load();
+document.getElementById("status").style.display="none";
+document.getElementById("dataStatus").style.display="block";
+document.getElementById("dataStatus").textContent="Settings restored to default.";
+};
+
+load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Assessment Matrix</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #0d1117; color: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 3rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+    h1 { color: #00bcff; margin-bottom: 1rem; font-size: 2.2rem; }
+    p.intro { color: #8b949e; margin-bottom: 2rem; font-size: 1.1rem; }
+    table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 8px; overflow: hidden; margin-bottom: 2rem; }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #30363d; }
+    th { background: #21262d; color: #58a6ff; }
+    .high { color: #ff7b72; font-weight: bold; }
+    .medium { color: #d29922; font-weight: bold; }
+    .low { color: #3fb950; font-weight: bold; }
+    .btn-back { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #00bcff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>⚠️ Risk Assessment Matrix</h1>
+  <p class="intro">Evaluation of organizational cyber threats, likelihood, impact, and mitigation controls.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Threat Vector</th>
+        <th>Impact</th>
+        <th>Likelihood</th>
+        <th>Mitigation Strategy</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ransomware Attack</td>
+        <td class="high">High</td>
+        <td class="medium">Medium</td>
+        <td>Immutable offline backups & Endpoint Detection & Response (EDR)</td>
+      </tr>
+      <tr>
+        <td>Phishing & Credential Theft</td>
+        <td class="high">High</td>
+        <td class="high">High</td>
+        <td>Hardware-based MFA & Security Awareness Training</td>
+      </tr>
+      <tr>
+        <td>Unpatched Software Vulnerabilities</td>
+        <td class="medium">Medium</td>
+        <td class="medium">Medium</td>
+        <td>Automated monthly patch management cycle</td>
+      </tr>
+      <tr>
+        <td>Insider Data Leakage</td>
+        <td class="medium">Medium</td>
+        <td class="low">Low</td>
+        <td>Data Loss Prevention (DLP) tools & RBAC policies</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <a href="index.html" class="btn-back">← Back to Dashboard</a>
+</body>
+</html>

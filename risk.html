@@ -1,0 +1,840 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Assessment | Security Command Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+#risk-app {
+  --r-bg:#0b1120;
+  --r-panel:#121d30;
+  --r-border:#243550;
+  --r-text:#e8eef8;
+  --r-muted:#93a6bf;
+  --r-blue:#3b82f6;
+  color:var(--r-text);
+  padding:25px 0 45px;
+}
+#risk-app * { box-sizing:border-box; }
+#risk-app .r-wrap { max-width:1350px; margin:auto; padding:0 20px; }
+#risk-app h2,#risk-app h3,#risk-app h4 { margin-top:0; }
+#risk-app button,#risk-app input,#risk-app select,#risk-app textarea { font:inherit; }
+#risk-app button { cursor:pointer; }
+#risk-app .r-muted { color:var(--r-muted); }
+#risk-app .r-top {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:15px; margin-bottom:22px;
+}
+#risk-app .r-top h2 { font-size:29px; margin-bottom:6px; }
+#risk-app .r-top p { margin:0; color:var(--r-muted); }
+#risk-app .r-actions { display:flex; gap:10px; flex-wrap:wrap; }
+#risk-app .r-btn {
+  padding:10px 15px; border-radius:9px; border:1px solid var(--r-border);
+  background:#18263d; color:var(--r-text); font-weight:600;
+}
+#risk-app .r-btn:hover { filter:brightness(1.15); }
+#risk-app .r-primary { background:#2563eb; border-color:#3b82f6; }
+#risk-app .r-danger { background:#451e2a; border-color:#793145; color:#fecdd3; }
+#risk-app .r-stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px;
+}
+#risk-app .r-card {
+  background:var(--r-panel); border:1px solid var(--r-border);
+  border-radius:13px; padding:18px; min-width:0;
+}
+#risk-app .r-stat-label { font-size:13px; color:var(--r-muted); }
+#risk-app .r-stat-value { font-size:30px; font-weight:800; margin-top:8px; }
+#risk-app .r-stat-icon { float:right; font-size:22px; }
+#risk-app .r-stat-foot { font-size:12px; color:var(--r-muted); margin-top:7px; }
+#risk-app .r-layout {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;
+}
+#risk-app .r-panel {
+  background:var(--r-panel); border:1px solid var(--r-border);
+  border-radius:14px; padding:20px; min-width:0;
+}
+#risk-app .r-panel h3 { font-size:18px; margin-bottom:5px; }
+#risk-app .r-subtitle { color:var(--r-muted); font-size:12px; margin:0 0 16px; }
+#risk-app .r-matrix {
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px;
+}
+#risk-app .r-cell {
+  border:1px solid #243550; border-radius:6px; min-height:48px;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:3px; font-size:12px; font-weight:700;
+}
+#risk-app .r-cell small { font-size:10px; opacity:.8; }
+#risk-app .r-low { background:#12402d; color:#86efac; }
+#risk-app .r-medium { background:#4a3b18; color:#fde68a; }
+#risk-app .r-high { background:#572e1b; color:#fdba74; }
+#risk-app .r-critical { background:#571e2a; color:#fda4af; }
+#risk-app .r-matrix-axis { font-size:11px; color:var(--r-muted); text-align:center; margin-top:10px; }
+#risk-app .r-legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:14px; font-size:11px; color:var(--r-muted); }
+#risk-app .r-legend span { display:flex; align-items:center; gap:6px; }
+#risk-app .r-dot { width:10px; height:10px; border-radius:3px; display:inline-block; }
+#risk-app .r-breakdown { display:flex; flex-direction:column; gap:15px; margin-top:18px; }
+#risk-app .r-break-row { display:grid; grid-template-columns:80px 1fr 35px; align-items:center; gap:10px; font-size:13px; }
+#risk-app .r-bar { background:#243550; height:9px; border-radius:20px; overflow:hidden; }
+#risk-app .r-bar-inner { height:100%; border-radius:20px; transition:width .3s; }
+#risk-app .r-filters {
+  display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 14px;
+}
+#risk-app .r-filters input,#risk-app .r-filters select {
+  padding:10px 12px; border:1px solid var(--r-border);
+  background:#0b1527; color:var(--r-text); border-radius:9px;
+}
+#risk-app .r-filters input { flex:1; min-width:180px; }
+#risk-app .r-table-wrap { overflow-x:auto; }
+#risk-app table { width:100%; border-collapse:collapse; min-width:900px; }
+#risk-app th,#risk-app td {
+  text-align:left; padding:13px 11px; border-bottom:1px solid var(--r-border);
+  font-size:13px; vertical-align:middle;
+}
+#risk-app th { color:var(--r-muted); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
+#risk-app .r-risk-name { font-weight:700; }
+#risk-app .r-risk-desc { color:var(--r-muted); font-size:11px; margin-top:4px; max-width:260px; }
+#risk-app .r-badge {
+  display:inline-block; padding:5px 9px; border-radius:20px;
+  font-size:11px; font-weight:700; white-space:nowrap;
+}
+#risk-app .r-badge-low { background:#123d2b; color:#86efac; }
+#risk-app .r-badge-medium { background:#4b3c18; color:#fde68a; }
+#risk-app .r-badge-high { background:#572e1b; color:#fdba74; }
+#risk-app .r-badge-critical { background:#571e2a; color:#fda4af; }
+#risk-app .r-badge-status { background:#1c3352; color:#93c5fd; }
+#risk-app .r-status-select {
+  background:#0b1527; border:1px solid var(--r-border);
+  border-radius:7px; padding:7px; color:var(--r-text); font-size:12px;
+}
+#risk-app .r-manage { display:flex; gap:6px; }
+#risk-app .r-mini {
+  border:1px solid var(--r-border); background:#18263d;
+  color:var(--r-text); padding:7px 9px; border-radius:7px; font-size:12px;
+}
+#risk-app .r-mini-delete { background:#451e2a; color:#fecdd3; }
+#risk-app .r-empty { text-align:center; padding:35px; color:var(--r-muted); }
+#risk-app .r-form-panel { display:none; margin-top:20px; }
+#risk-app .r-form-panel.r-visible { display:block; }
+#risk-app .r-form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+}
+#risk-app .r-field { display:flex; flex-direction:column; gap:7px; }
+#risk-app .r-field label { font-size:12px; color:var(--r-muted); }
+#risk-app .r-field input,#risk-app .r-field select,#risk-app .r-field textarea {
+  width:100%; background:#0b1527; color:var(--r-text);
+  border:1px solid var(--r-border); border-radius:8px; padding:11px;
+}
+#risk-app .r-field textarea { resize:vertical; min-height:85px; }
+#risk-app .r-full { grid-column:1/-1; }
+#risk-app .r-form-footer { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+#risk-app .r-score-preview {
+  padding:12px; border-radius:9px; border:1px solid var(--r-border);
+  background:#0b1527; font-size:13px;
+}
+#risk-app .r-footer-note {
+  margin-top:18px; padding:13px; border-radius:9px;
+  background:#172438; border:1px solid var(--r-border);
+  color:var(--r-muted); font-size:12px;
+}
+@media(max-width:900px) {
+  #risk-app .r-layout { grid-template-columns:1fr; }
+  #risk-app .r-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:600px) {
+  #risk-app .r-wrap { padding:0 13px; }
+  #risk-app .r-top h2 { font-size:24px; }
+  #risk-app .r-stats { gap:9px; }
+  #risk-app .r-card { padding:13px; }
+  #risk-app .r-stat-value { font-size:24px; }
+  #risk-app .r-panel { padding:14px; }
+  #risk-app .r-form-grid { grid-template-columns:1fr; }
+  #risk-app .r-full { grid-column:auto; }
+  #risk-app .r-cell { min-height:40px; font-size:10px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛡 Cybersecurity Policy & Incident Response</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="policies.html">Policies</a>
+    <a href="incident.html">Incident Response</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="awareness.html">Awareness</a>
+    <a href="risk.html">Risk Assessment</a>
+  </nav>
+</header>
+
+<main id="risk-app">
+<div class="r-wrap">
+
+  <div class="r-top">
+    <div>
+      <h2>⚠️ Risk Assessment Center</h2>
+      <p>Identify, evaluate, prioritize and manage cybersecurity risks.</p>
+    </div>
+    <div class="r-actions">
+      <button class="r-btn" id="r-export">⬇ Export CSV</button>
+      <button class="r-btn r-primary" id="r-add-btn">＋ Add New Risk</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY CARDS -->
+  <section class="r-stats">
+    <div class="r-card">
+      <span class="r-stat-icon">📋</span>
+      <div class="r-stat-label">Total Risks</div>
+      <div class="r-stat-value" id="r-total">0</div>
+      <div class="r-stat-foot">Registered risks</div>
+    </div>
+    <div class="r-card">
+      <span class="r-stat-icon">🔴</span>
+      <div class="r-stat-label">Critical Risks</div>
+      <div class="r-stat-value" id="r-critical">0</div>
+      <div class="r-stat-foot">Immediate attention</div>
+    </div>
+    <div class="r-card">
+      <span class="r-stat-icon">🟠</span>
+      <div class="r-stat-label">High Risks</div>
+      <div class="r-stat-value" id="r-high">0</div>
+      <div class="r-stat-foot">Priority treatment</div>
+    </div>
+    <div class="r-card">
+      <span class="r-stat-icon">✅</span>
+      <div class="r-stat-label">Mitigated</div>
+      <div class="r-stat-value" id="r-mitigated">0</div>
+      <div class="r-stat-foot">Marked as mitigated</div>
+    </div>
+  </section>
+
+  <!-- MATRIX AND DISTRIBUTION -->
+  <section class="r-layout">
+    <div class="r-panel">
+      <h3>🎯 Risk Matrix</h3>
+      <p class="r-subtitle">Impact × Likelihood · Click a cell to filter the register</p>
+      <div class="r-matrix" id="r-matrix"></div>
+      <div class="r-matrix-axis">← Impact (1 = Low · 5 = Severe) →</div>
+      <div class="r-legend">
+        <span><i class="r-dot r-low"></i> Low</span>
+        <span><i class="r-dot r-medium"></i> Medium</span>
+        <span><i class="r-dot r-high"></i> High</span>
+        <span><i class="r-dot r-critical"></i> Critical</span>
+      </div>
+    </div>
+
+    <div class="r-panel">
+      <h3>📊 Risk Distribution</h3>
+      <p class="r-subtitle">Current distribution by risk level</p>
+      <div class="r-breakdown" id="r-breakdown"></div>
+    </div>
+  </section>
+
+  <!-- ADD RISK FORM -->
+  <section class="r-panel r-form-panel" id="r-form-panel">
+    <h3 id="r-form-title">＋ Register a New Risk</h3>
+    <p class="r-subtitle">Enter risk details. Risk score is calculated automatically.</p>
+
+    <form id="r-form">
+      <div class="r-form-grid">
+        <div class="r-field r-full">
+          <label for="r-title">Risk Title *</label>
+          <input id="r-title" required maxlength="120" placeholder="e.g. Unauthorized access to company data">
+        </div>
+
+        <div class="r-field r-full">
+          <label for="r-description">Description</label>
+          <textarea id="r-description" maxlength="500" placeholder="Describe the risk and its potential consequences"></textarea>
+        </div>
+
+        <div class="r-field">
+          <label for="r-category">Category</label>
+          <select id="r-category">
+            <option>Data Security</option>
+            <option>Network Security</option>
+            <option>Human / Phishing</option>
+            <option>Access Control</option>
+            <option>Malware</option>
+            <option>Physical Security</option>
+            <option>Business Continuity</option>
+            <option>Compliance</option>
+            <option>Third Party</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="r-field">
+          <label for="r-owner">Risk Owner</label>
+          <input id="r-owner" maxlength="80" placeholder="e.g. IT Security Team">
+        </div>
+
+        <div class="r-field">
+          <label for="r-likelihood">Likelihood (1–5)</label>
+          <select id="r-likelihood">
+            <option value="1">1 — Rare</option>
+            <option value="2">2 — Unlikely</option>
+            <option value="3" selected>3 — Possible</option>
+            <option value="4">4 — Likely</option>
+            <option value="5">5 — Almost Certain</option>
+          </select>
+        </div>
+
+        <div class="r-field">
+          <label for="r-impact">Impact (1–5)</label>
+          <select id="r-impact">
+            <option value="1">1 — Negligible</option>
+            <option value="2">2 — Minor</option>
+            <option value="3" selected>3 — Moderate</option>
+            <option value="4">4 — Major</option>
+            <option value="5">5 — Severe</option>
+          </select>
+        </div>
+
+        <div class="r-field">
+          <label for="r-treatment">Treatment Plan</label>
+          <select id="r-treatment">
+            <option>Mitigate</option>
+            <option>Avoid</option>
+            <option>Transfer</option>
+            <option>Accept</option>
+          </select>
+        </div>
+
+        <div class="r-field">
+          <label for="r-mitigation">Mitigation Plan</label>
+          <textarea id="r-mitigation" maxlength="500" placeholder="Actions planned to reduce this risk"></textarea>
+        </div>
+
+        <div class="r-field">
+          <label for="r-status">Status</label>
+          <select id="r-status">
+            <option>Identified</option>
+            <option>In Progress</option>
+            <option>Mitigated</option>
+            <option>Accepted</option>
+          </select>
+        </div>
+
+        <div class="r-field r-full">
+          <div class="r-score-preview" id="r-score-preview">
+            Score: 9 / 25 — Medium Risk
+          </div>
+        </div>
+      </div>
+
+      <div class="r-form-footer">
+        <button class="r-btn r-primary" type="submit" id="r-save-btn">Save Risk</button>
+        <button class="r-btn" type="button" id="r-cancel-btn">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- RISK REGISTER -->
+  <section class="r-panel" style="margin-top:20px;">
+    <h3>📑 Risk Register</h3>
+    <p class="r-subtitle">Manage, filter and track all identified cybersecurity risks.</p>
+
+    <div class="r-filters">
+      <input type="search" id="r-search" placeholder="🔎 Search risks...">
+      <select id="r-level-filter">
+        <option value="All">All Risk Levels</option>
+        <option value="Critical">Critical</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <select id="r-status-filter">
+        <option value="All">All Statuses</option>
+        <option>Identified</option>
+        <option>In Progress</option>
+        <option>Mitigated</option>
+        <option>Accepted</option>
+      </select>
+      <button class="r-btn" id="r-reset-filters">Reset Filters</button>
+    </div>
+
+    <div class="r-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Level</th>
+            <th>Status</th>
+            <th>Owner</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="r-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="r-footer-note">
+    ℹ️ Demo environment: Risk data is saved locally in this browser. Scores are calculated using Likelihood × Impact and are intended for educational purposes.
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <p>© 2026 Cybersecurity Policy & Incident Response Project</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "cyber_risk_assessment_v1";
+
+  const $ = id => document.getElementById(id);
+
+  let risks = [];
+  let editingId = null;
+  let matrixFilter = null;
+
+  const demoRisks = [
+    {
+      id:"risk-1",
+      title:"Phishing Attack",
+      description:"Employees may fall victim to fraudulent emails and expose credentials.",
+      category:"Human / Phishing",
+      owner:"Security Team",
+      likelihood:4,
+      impact:4,
+      treatment:"Mitigate",
+      mitigation:"Security awareness training, email filtering and phishing simulations.",
+      status:"In Progress",
+      created:new Date().toISOString()
+    },
+    {
+      id:"risk-2",
+      title:"Unauthorized Data Access",
+      description:"Sensitive company information may be accessed by unauthorized users.",
+      category:"Access Control",
+      owner:"IT Department",
+      likelihood:3,
+      impact:5,
+      treatment:"Mitigate",
+      mitigation:"Enforce MFA, least privilege and regular access reviews.",
+      status:"Identified",
+      created:new Date().toISOString()
+    },
+    {
+      id:"risk-3",
+      title:"Ransomware Infection",
+      description:"Malicious software could encrypt systems and disrupt operations.",
+      category:"Malware",
+      owner:"Infrastructure Team",
+      likelihood:3,
+      impact:5,
+      treatment:"Mitigate",
+      mitigation:"Maintain offline backups, endpoint protection and recovery testing.",
+      status:"In Progress",
+      created:new Date().toISOString()
+    },
+    {
+      id:"risk-4",
+      title:"Unpatched Software",
+      description:"Outdated applications may contain exploitable vulnerabilities.",
+      category:"Network Security",
+      owner:"IT Department",
+      likelihood:3,
+      impact:3,
+      treatment:"Mitigate",
+      mitigation:"Implement patch management and vulnerability scanning.",
+      status:"Identified",
+      created:new Date().toISOString()
+    },
+    {
+      id:"risk-5",
+      title:"Backup Failure",
+      description:"Backup failure could prevent restoration after an incident.",
+      category:"Business Continuity",
+      owner:"Operations",
+      likelihood:2,
+      impact:4,
+      treatment:"Mitigate",
+      mitigation:"Monitor backup jobs and conduct regular restoration tests.",
+      status:"Mitigated",
+      created:new Date().toISOString()
+    }
+  ];
+
+  function score(risk) {
+    return Number(risk.likelihood) * Number(risk.impact);
+  }
+
+  function levelFromScore(value) {
+    if (value >= 20) return "Critical";
+    if (value >= 12) return "High";
+    if (value >= 6) return "Medium";
+    return "Low";
+  }
+
+  function level(risk) {
+    return levelFromScore(score(risk));
+  }
+
+  function badgeClass(value) {
+    return "r-badge-" + value.toLowerCase();
+  }
+
+  function safeText(value) {
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function loadData() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (Array.isArray(saved)) {
+        risks = saved;
+      } else {
+        risks = demoRisks;
+        saveData();
+      }
+    } catch {
+      risks = demoRisks;
+      saveData();
+    }
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(risks));
+  }
+
+  function renderStats() {
+    $("r-total").textContent = risks.length;
+    $("r-critical").textContent = risks.filter(r => level(r) === "Critical").length;
+    $("r-high").textContent = risks.filter(r => level(r) === "High").length;
+    $("r-mitigated").textContent = risks.filter(r => r.status === "Mitigated").length;
+  }
+
+  function renderMatrix() {
+    const matrix = $("r-matrix");
+    matrix.innerHTML = "";
+
+    // Display impact columns 1–5 and likelihood rows 5–1.
+    for (let likelihood = 5; likelihood >= 1; likelihood--) {
+      for (let impact = 1; impact <= 5; impact++) {
+        const value = likelihood * impact;
+        const riskLevel = levelFromScore(value);
+        const cell = document.createElement("button");
+
+        cell.type = "button";
+        cell.className = "r-cell r-" + riskLevel.toLowerCase();
+        cell.title = "Likelihood " + likelihood + " × Impact " + impact + " = " + value + " (" + riskLevel + ")";
+
+        const count = risks.filter(r =>
+          Number(r.likelihood) === likelihood &&
+          Number(r.impact) === impact
+        ).length;
+
+        cell.innerHTML = "<span>" + value + "</span><small>" + count + " risk(s)</small>";
+
+        cell.addEventListener("click", () => {
+          matrixFilter = { likelihood, impact };
+          $("r-search").value = "";
+          $("r-level-filter").value = "All";
+          $("r-status-filter").value = "All";
+          renderTable();
+        });
+
+        matrix.appendChild(cell);
+      }
+    }
+  }
+
+  function renderBreakdown() {
+    const box = $("r-breakdown");
+    const levels = ["Critical","High","Medium","Low"];
+    box.innerHTML = "";
+
+    levels.forEach(name => {
+      const count = risks.filter(r => level(r) === name).length;
+      const percentage = risks.length ? (count / risks.length) * 100 : 0;
+
+      const colorClass = {
+        Critical:"#ef4444",
+        High:"#f97316",
+        Medium:"#eab308",
+        Low:"#22c55e"
+      }[name];
+
+      const row = document.createElement("div");
+      row.className = "r-break-row";
+
+      row.innerHTML = `
+        <span>${name}</span>
+        <div class="r-bar">
+          <div class="r-bar-inner" style="width:${percentage}%;background:${colorClass}"></div>
+        </div>
+        <strong>${count}</strong>
+      `;
+
+      box.appendChild(row);
+    });
+  }
+
+  function renderTable() {
+    const body = $("r-table-body");
+    body.innerHTML = "";
+
+    const query = $("r-search").value.toLowerCase().trim();
+    const selectedLevel = $("r-level-filter").value;
+    const selectedStatus = $("r-status-filter").value;
+
+    const filtered = risks.filter(r => {
+      const searchable = [
+        r.title,r.description,r.category,r.owner,r.mitigation,r.treatment
+      ].join(" ").toLowerCase();
+
+      if (query && !searchable.includes(query)) return false;
+      if (selectedLevel !== "All" && level(r) !== selectedLevel) return false;
+      if (selectedStatus !== "All" && r.status !== selectedStatus) return false;
+
+      if (matrixFilter &&
+        (Number(r.likelihood) !== matrixFilter.likelihood ||
+         Number(r.impact) !== matrixFilter.impact)) return false;
+
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      body.innerHTML = `<tr><td colspan="7" class="r-empty">No risks found. Try changing your filters or add a new risk.</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(r => {
+      const tr = document.createElement("tr");
+      const riskLevel = level(r);
+      const scoreValue = score(r);
+
+      tr.innerHTML = `
+        <td>
+          <div class="r-risk-name">${safeText(r.title)}</div>
+          <div class="r-risk-desc">${safeText(r.description || "No description provided")}</div>
+        </td>
+        <td>${safeText(r.category)}</td>
+        <td><strong>${scoreValue}/25</strong><br>
+          <small class="r-muted">L${r.likelihood} × I${r.impact}</small>
+        </td>
+        <td><span class="r-badge ${badgeClass(riskLevel)}">${riskLevel}</span></td>
+        <td>
+          <select class="r-status-select" data-status-id="${safeText(r.id)}">
+            <option ${r.status==="Identified"?"selected":""}>Identified</option>
+            <option ${r.status==="In Progress"?"selected":""}>In Progress</option>
+            <option ${r.status==="Mitigated"?"selected":""}>Mitigated</option>
+            <option ${r.status==="Accepted"?"selected":""}>Accepted</option>
+          </select>
+        </td>
+        <td>${safeText(r.owner || "Unassigned")}</td>
+        <td>
+          <div class="r-manage">
+            <button class="r-mini" data-edit-id="${safeText(r.id)}">Edit</button>
+            <button class="r-mini r-mini-delete" data-delete-id="${safeText(r.id)}">Delete</button>
+          </div>
+        </td>
+      `;
+
+      body.appendChild(tr);
+    });
+
+    body.querySelectorAll("[data-status-id]").forEach(select => {
+      select.addEventListener("change", e => {
+        const item = risks.find(r => r.id === e.target.dataset.statusId);
+        if (!item) return;
+
+        item.status = e.target.value;
+        saveData();
+        renderAll();
+      });
+    });
+
+    body.querySelectorAll("[data-edit-id]").forEach(button => {
+      button.addEventListener("click", () => editRisk(button.dataset.editId));
+    });
+
+    body.querySelectorAll("[data-delete-id]").forEach(button => {
+      button.addEventListener("click", () => deleteRisk(button.dataset.deleteId));
+    });
+  }
+
+  function renderAll() {
+    renderStats();
+    renderMatrix();
+    renderBreakdown();
+    renderTable();
+  }
+
+  function openForm() {
+    editingId = null;
+    $("r-form").reset();
+    $("r-form-title").textContent = "＋ Register a New Risk";
+    $("r-save-btn").textContent = "Save Risk";
+    $("r-form-panel").classList.add("r-visible");
+    updateScorePreview();
+    $("r-form-panel").scrollIntoView({ behavior:"smooth", block:"start" });
+    $("r-title").focus();
+  }
+
+  function closeForm() {
+    $("r-form-panel").classList.remove("r-visible");
+    $("r-form").reset();
+    editingId = null;
+    updateScorePreview();
+  }
+
+  function editRisk(id) {
+    const item = risks.find(r => r.id === id);
+    if (!item) return;
+
+    editingId = id;
+
+    $("r-title").value = item.title || "";
+    $("r-description").value = item.description || "";
+    $("r-category").value = item.category || "Other";
+    $("r-owner").value = item.owner || "";
+    $("r-likelihood").value = item.likelihood;
+    $("r-impact").value = item.impact;
+    $("r-treatment").value = item.treatment || "Mitigate";
+    $("r-mitigation").value = item.mitigation || "";
+    $("r-status").value = item.status || "Identified";
+
+    $("r-form-title").textContent = "✏️ Edit Risk";
+    $("r-save-btn").textContent = "Update Risk";
+    $("r-form-panel").classList.add("r-visible");
+    updateScorePreview();
+
+    $("r-form-panel").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  function deleteRisk(id) {
+    const item = risks.find(r => r.id === id);
+    if (!item) return;
+
+    if (!confirm("Delete risk: " + item.title + " ?")) return;
+
+    risks = risks.filter(r => r.id !== id);
+    saveData();
+    renderAll();
+  }
+
+  function updateScorePreview() {
+    const likelihood = Number($("r-likelihood").value);
+    const impact = Number($("r-impact").value);
+    const value = likelihood * impact;
+    const riskLevel = levelFromScore(value);
+
+    $("r-score-preview").innerHTML =
+      "Score: <strong>" + value + " / 25</strong> — " +
+      "<span class='r-badge " + badgeClass(riskLevel) + "'>" +
+      riskLevel + " Risk</span>";
+  }
+
+  $("r-add-btn").addEventListener("click", openForm);
+  $("r-cancel-btn").addEventListener("click", closeForm);
+
+  $("r-likelihood").addEventListener("change", updateScorePreview);
+  $("r-impact").addEventListener("change", updateScorePreview);
+
+  $("r-form").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const item = {
+      title:$("r-title").value.trim(),
+      description:$("r-description").value.trim(),
+      category:$("r-category").value,
+      owner:$("r-owner").value.trim(),
+      likelihood:Number($("r-likelihood").value),
+      impact:Number($("r-impact").value),
+      treatment:$("r-treatment").value,
+      mitigation:$("r-mitigation").value.trim(),
+      status:$("r-status").value
+    };
+
+    if (!item.title) return;
+
+    if (editingId) {
+      const existing = risks.find(r => r.id === editingId);
+      if (existing) Object.assign(existing,item);
+    } else {
+      item.id = "risk-" + Date.now();
+      item.created = new Date().toISOString();
+      risks.unshift(item);
+    }
+
+    saveData();
+    matrixFilter = null;
+    closeForm();
+    renderAll();
+  });
+
+  ["r-search","r-level-filter","r-status-filter"].forEach(id => {
+    $(id).addEventListener("input",renderTable);
+    $(id).addEventListener("change",renderTable);
+  });
+
+  $("r-reset-filters").addEventListener("click", () => {
+    $("r-search").value = "";
+    $("r-level-filter").value = "All";
+    $("r-status-filter").value = "All";
+    matrixFilter = null;
+    renderAll();
+  });
+
+  $("r-export").addEventListener("click", () => {
+    if (!risks.length) {
+      alert("No risks to export.");
+      return;
+    }
+
+    const headers = [
+      "Title","Description","Category","Owner","Likelihood","Impact",
+      "Score","Level","Treatment","Mitigation","Status"
+    ];
+
+    const rows = risks.map(r => [
+      r.title,r.description,r.category,r.owner,
+      r.likelihood,r.impact,score(r),level(r),
+      r.treatment,r.mitigation,r.status
+    ]);
+
+    const csv = [headers,...rows]
+      .map(row => row.map(value =>
+        '"' + String(value ?? "").replaceAll('"','""') + '"'
+      ).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "cybersecurity-risk-register.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  });
+
+  loadData();
+  renderAll();
+  updateScorePreview();
+
+})();
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>

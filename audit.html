@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Audit Log</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1120;color:#e5e7eb}
+#audit{max-width:1400px;margin:auto;padding:30px}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:25px}
+header h1{margin:0}
+header p{color:#94a3b8}
+nav{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:25px}
+nav a{padding:10px 14px;background:#172235;border:1px solid #26364f;border-radius:9px;color:#cbd5e1;text-decoration:none}
+nav a:hover{background:#2563eb;color:white}
+.panel{background:#131e30;border:1px solid #26364f;border-radius:15px;padding:22px;margin-bottom:20px}
+.hero{background:linear-gradient(120deg,#172554,#101a2a)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
+.stat{background:#101a2a;padding:20px;border-radius:12px;border:1px solid #283951}
+.stat small{color:#94a3b8}
+.stat strong{display:block;font-size:30px;margin-top:10px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+input,select{background:#0b1120;color:white;border:1px solid #34445e;border-radius:8px;padding:11px}
+input{flex:1;min-width:220px}
+button{background:#2563eb;color:white;border:0;padding:11px 15px;border-radius:8px;cursor:pointer}
+button:hover{background:#1d4ed8}
+.danger{background:#991b1b}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th,td{text-align:left;padding:13px;border-bottom:1px solid #29364b}
+th{color:#94a3b8;font-size:12px;text-transform:uppercase}
+td{font-size:14px}
+.tag{padding:5px 9px;border-radius:20px;font-size:12px;background:#1e3a5f}
+footer{text-align:center;color:#64748b;padding:20px}
+@media(max-width:600px){#audit{padding:15px}}
+</style>
+</head>
+<body>
+<div id="audit">
+
+<header>
+<div>
+<h1>🔎 Security Audit Log</h1>
+<p>Track and review activity within your security dashboard</p>
+</div>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="policies.html">Policies</a>
+<a href="incident.html">Incident Response</a>
+<a href="recovery.html">Recovery</a>
+<a href="awareness.html">Awareness</a>
+<a href="risk.html">Risk Assessment</a>
+<a href="analytics.html">Analytics</a>
+<a href="settings.html">Settings</a>
+<a href="audit.html" style="background:#2563eb;color:white">Audit Log</a>
+</nav>
+
+<section class="panel hero">
+<h2>Activity Overview</h2>
+<p style="color:#94a3b8">Review recorded events, search activities, and export your audit history.</p>
+<div class="stats">
+<div class="stat"><small>Total Events</small><strong id="total">0</strong></div>
+<div class="stat"><small>Today</small><strong id="today">0</strong></div>
+<div class="stat"><small>Security Events</small><strong id="security">0</strong></div>
+<div class="stat"><small>Recent Activity</small><strong id="recent">0</strong></div>
+</div>
+</section>
+
+<section class="panel">
+<h2>Activity Records</h2>
+<div class="controls">
+<input id="search" placeholder="Search activity, category, details...">
+<select id="category">
+<option value="all">All Categories</option>
+<option>Incident</option>
+<option>Policy</option>
+<option>Risk</option>
+<option>Recovery</option>
+<option>Awareness</option>
+<option>System</option>
+</select>
+<button id="export">Export CSV</button>
+<button class="danger" id="clear">Clear Logs</button>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Timestamp</th><th>Category</th><th>Action</th><th>Details</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+</section>
+
+<footer>Security Command Center · Audit Log Center</footer>
+</div>
+
+<script>
+(function(){
+const KEY="cyber_audit_log_v1";
+const sample=[
+{time:new Date().toISOString(),category:"System",action:"Audit Center Opened",details:"Audit log dashboard initialized"},
+{time:new Date(Date.now()-3600000).toISOString(),category:"Incident",action:"Incident Review",details:"Sample incident activity"},
+{time:new Date(Date.now()-7200000).toISOString(),category:"Policy",action:"Policy Check",details:"Sample policy review activity"},
+{time:new Date(Date.now()-86400000).toISOString(),category:"Risk",action:"Risk Assessment",details:"Sample risk evaluation activity"},
+{time:new Date(Date.now()-172800000).toISOString(),category:"Recovery",action:"Recovery Plan Review",details:"Sample recovery activity"}
+];
+let logs=[];
+try{logs=JSON.parse(localStorage.getItem(KEY))||sample}catch(e){logs=sample}
+if(!logs.length)logs=sample;
+function save(){localStorage.setItem(KEY,JSON.stringify(logs))}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){
+const q=document.getElementById("search").value.toLowerCase();
+const cat=document.getElementById("category").value;
+const filtered=logs.filter(x=>(cat==="all"||x.category===cat)&&(`${x.category} ${x.action} ${x.details}`.toLowerCase().includes(q)));
+document.getElementById("rows").innerHTML=filtered.map(x=>`<tr><td>${esc(new Date(x.time).toLocaleString())}</td><td><span class="tag">${esc(x.category)}</span></td><td>${esc(x.action)}</td><td>${esc(x.details)}</td></tr>`).join("")||'<tr><td colspan="4">No matching activity.</td></tr>';
+document.getElementById("total").textContent=logs.length;
+const start=new Date();start.setHours(0,0,0,0);
+document.getElementById("today").textContent=logs.filter(x=>new Date(x.time)>=start).length;
+document.getElementById("security").textContent=logs.filter(x=>["Incident","Risk"].includes(x.category)).length;
+document.getElementById("recent").textContent=logs.filter(x=>Date.now()-new Date(x.time)<86400000).length;
+}
+document.getElementById("search").oninput=render;
+document.getElementById("category").onchange=render;
+document.getElementById("export").onclick=function(){
+const data=[["Timestamp","Category","Action","Details"],...logs.map(x=>[x.time,x.category,x.action,x.details])];
+const csv=data.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+const blob=new Blob([csv],{type:"text/csv"});
+const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="security-audit-log.csv";a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById("clear").onclick=function(){
+if(confirm("Permanently clear all audit logs stored in this browser?")){logs=[];save();render()}
+};
+save();render();
+})();
+</script>
+</body>
+</html>

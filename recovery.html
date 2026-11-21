@@ -1,0 +1,864 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disaster Recovery Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+#dr-app {
+  --bg:#0b1120;
+  --panel:#121d30;
+  --border:#243550;
+  --text:#e8eef8;
+  --muted:#93a6bf;
+  color:var(--text);
+  padding:25px 0 45px;
+}
+#dr-app * { box-sizing:border-box; }
+#dr-app .dr-wrap { max-width:1300px; margin:auto; padding:0 20px; }
+#dr-app h2,#dr-app h3,#dr-app h4 { margin-top:0; }
+#dr-app button,#dr-app input,#dr-app select,#dr-app textarea { font:inherit; }
+#dr-app button { cursor:pointer; }
+#dr-app .dr-muted { color:var(--muted); }
+#dr-app .dr-top {
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:15px; margin-bottom:22px;
+}
+#dr-app .dr-top h2 { font-size:29px; margin-bottom:6px; }
+#dr-app .dr-top p { margin:0; color:var(--muted); }
+#dr-app .dr-actions { display:flex; gap:10px; flex-wrap:wrap; }
+#dr-app .dr-btn {
+  border:1px solid var(--border); background:#18263d; color:var(--text);
+  padding:10px 15px; border-radius:9px; font-weight:600;
+}
+#dr-app .dr-btn:hover { filter:brightness(1.15); }
+#dr-app .dr-primary { background:#2563eb; border-color:#3b82f6; }
+#dr-app .dr-stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px;
+}
+#dr-app .dr-card {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:13px; padding:18px; min-width:0;
+}
+#dr-app .dr-label { color:var(--muted); font-size:13px; }
+#dr-app .dr-value { font-size:30px; font-weight:800; margin-top:8px; }
+#dr-app .dr-icon { float:right; font-size:22px; }
+#dr-app .dr-foot { font-size:12px; color:var(--muted); margin-top:7px; }
+#dr-app .dr-layout {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;
+}
+#dr-app .dr-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:20px; min-width:0;
+}
+#dr-app .dr-panel h3 { font-size:18px; margin-bottom:5px; }
+#dr-app .dr-sub { color:var(--muted); font-size:12px; margin:0 0 16px; }
+#dr-app .dr-health-list { display:flex; flex-direction:column; gap:14px; }
+#dr-app .dr-health-row {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px; border-bottom:1px solid var(--border); padding-bottom:12px;
+}
+#dr-app .dr-health-row:last-child { border-bottom:0; padding-bottom:0; }
+#dr-app .dr-health-name { font-size:13px; }
+#dr-app .dr-pill {
+  display:inline-block; border-radius:20px; padding:5px 9px;
+  font-size:11px; font-weight:700; white-space:nowrap;
+}
+#dr-app .dr-green { background:#123d2b; color:#86efac; }
+#dr-app .dr-blue { background:#17365c; color:#93c5fd; }
+#dr-app .dr-yellow { background:#4b3c18; color:#fde68a; }
+#dr-app .dr-red { background:#571e2a; color:#fda4af; }
+#dr-app .dr-rto-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+#dr-app .dr-rto-box {
+  background:#0b1527; border:1px solid var(--border);
+  border-radius:10px; padding:15px;
+}
+#dr-app .dr-rto-box small { color:var(--muted); display:block; }
+#dr-app .dr-rto-box strong { font-size:25px; display:block; margin-top:7px; }
+#dr-app .dr-rto-box p { color:var(--muted); font-size:11px; margin:6px 0 0; }
+#dr-app .dr-plan-list { display:flex; flex-direction:column; gap:12px; }
+#dr-app .dr-plan-item {
+  border:1px solid var(--border); border-radius:10px; padding:13px;
+  background:#0e192b;
+}
+#dr-app .dr-plan-head {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  flex-wrap:wrap; gap:10px;
+}
+#dr-app .dr-plan-head strong { font-size:14px; }
+#dr-app .dr-plan-item p { color:var(--muted); font-size:12px; margin:8px 0; line-height:1.6; }
+#dr-app .dr-plan-meta { display:flex; flex-wrap:wrap; gap:8px; font-size:11px; color:var(--muted); }
+#dr-app .dr-progress {
+  height:7px; background:#243550; border-radius:20px; overflow:hidden; margin-top:10px;
+}
+#dr-app .dr-progress-fill { height:100%; border-radius:20px; background:#3b82f6; }
+#dr-app .dr-filters {
+  display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 14px;
+}
+#dr-app .dr-filters input,#dr-app .dr-filters select {
+  padding:10px 12px; border:1px solid var(--border);
+  background:#0b1527; color:var(--text); border-radius:9px;
+}
+#dr-app .dr-filters input { flex:1; min-width:180px; }
+#dr-app .dr-table-wrap { overflow-x:auto; }
+#dr-app table { width:100%; border-collapse:collapse; min-width:900px; }
+#dr-app th,#dr-app td {
+  text-align:left; padding:13px 11px;
+  border-bottom:1px solid var(--border); font-size:13px;
+}
+#dr-app th { color:var(--muted); font-size:11px; text-transform:uppercase; }
+#dr-app .dr-name { font-weight:700; }
+#dr-app .dr-small { color:var(--muted); font-size:11px; margin-top:4px; }
+#dr-app .dr-select {
+  background:#0b1527; border:1px solid var(--border);
+  border-radius:7px; padding:7px; color:var(--text); font-size:12px;
+}
+#dr-app .dr-mini {
+  border:1px solid var(--border); background:#18263d;
+  color:var(--text); padding:7px 9px; border-radius:7px; font-size:12px;
+}
+#dr-app .dr-delete { background:#451e2a; color:#fecdd3; }
+#dr-app .dr-empty { text-align:center; padding:30px; color:var(--muted); }
+#dr-app .dr-form-panel { display:none; margin-top:20px; }
+#dr-app .dr-form-panel.dr-visible { display:block; }
+#dr-app .dr-form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+}
+#dr-app .dr-field { display:flex; flex-direction:column; gap:7px; }
+#dr-app .dr-field label { color:var(--muted); font-size:12px; }
+#dr-app .dr-field input,#dr-app .dr-field select,#dr-app .dr-field textarea {
+  width:100%; background:#0b1527; color:var(--text);
+  border:1px solid var(--border); border-radius:8px; padding:11px;
+}
+#dr-app .dr-field textarea { min-height:90px; resize:vertical; }
+#dr-app .dr-full { grid-column:1/-1; }
+#dr-app .dr-form-actions { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+#dr-app .dr-test-box {
+  border:1px solid var(--border); background:#0b1527;
+  border-radius:10px; padding:15px; margin-top:14px;
+}
+#dr-app .dr-test-box h4 { margin:0 0 8px; }
+#dr-app .dr-test-box p { color:var(--muted); font-size:12px; line-height:1.6; margin:0; }
+#dr-app .dr-note {
+  margin-top:18px; padding:13px; border-radius:9px;
+  background:#172438; border:1px solid var(--border);
+  color:var(--muted); font-size:12px;
+}
+@media(max-width:900px) {
+  #dr-app .dr-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #dr-app .dr-layout { grid-template-columns:1fr; }
+}
+@media(max-width:600px) {
+  #dr-app .dr-wrap { padding:0 13px; }
+  #dr-app .dr-top h2 { font-size:24px; }
+  #dr-app .dr-card { padding:13px; }
+  #dr-app .dr-value { font-size:24px; }
+  #dr-app .dr-panel { padding:14px; }
+  #dr-app .dr-form-grid { grid-template-columns:1fr; }
+  #dr-app .dr-full { grid-column:auto; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛡 Cybersecurity Policy & Incident Response</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="policies.html">Policies</a>
+    <a href="incident.html">Incident Response</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="awareness.html">Awareness</a>
+    <a href="risk.html">Risk Assessment</a>
+  </nav>
+</header>
+
+<main id="dr-app">
+<div class="dr-wrap">
+
+  <div class="dr-top">
+    <div>
+      <h2>💾 Disaster Recovery Center</h2>
+      <p>Backup readiness, recovery planning and business continuity management.</p>
+    </div>
+    <div class="dr-actions">
+      <button class="dr-btn" id="dr-export">⬇ Export CSV</button>
+      <button class="dr-btn dr-primary" id="dr-add">＋ New Recovery Plan</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <section class="dr-stats">
+    <div class="dr-card">
+      <span class="dr-icon">📋</span>
+      <div class="dr-label">Total Plans</div>
+      <div class="dr-value" id="dr-total">0</div>
+      <div class="dr-foot">Registered recovery plans</div>
+    </div>
+    <div class="dr-card">
+      <span class="dr-icon">🟢</span>
+      <div class="dr-label">Ready</div>
+      <div class="dr-value" id="dr-ready">0</div>
+      <div class="dr-foot">Plans marked ready</div>
+    </div>
+    <div class="dr-card">
+      <span class="dr-icon">🧪</span>
+      <div class="dr-label">Tests Completed</div>
+      <div class="dr-value" id="dr-tested">0</div>
+      <div class="dr-foot">Recovery tests recorded</div>
+    </div>
+    <div class="dr-card">
+      <span class="dr-icon">⚠️</span>
+      <div class="dr-label">Needs Attention</div>
+      <div class="dr-value" id="dr-attention">0</div>
+      <div class="dr-foot">Plans not ready</div>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section class="dr-layout">
+    <div class="dr-panel">
+      <h3>📡 Recovery Readiness</h3>
+      <p class="dr-sub">Current status of registered recovery plans</p>
+      <div class="dr-health-list" id="dr-health"></div>
+    </div>
+
+    <div class="dr-panel">
+      <h3>⏱ Recovery Objectives</h3>
+      <p class="dr-sub">Defined recovery targets across your plans</p>
+      <div class="dr-rto-grid">
+        <div class="dr-rto-box">
+          <small>Average RTO</small>
+          <strong id="dr-avg-rto">—</strong>
+          <p>Target restoration time</p>
+        </div>
+        <div class="dr-rto-box">
+          <small>Average RPO</small>
+          <strong id="dr-avg-rpo">—</strong>
+          <p>Target data loss window</p>
+        </div>
+        <div class="dr-rto-box">
+          <small>Last Recovery Test</small>
+          <strong id="dr-last-test">—</strong>
+          <p>Most recent test date</p>
+        </div>
+        <div class="dr-rto-box">
+          <small>Backup Coverage</small>
+          <strong id="dr-coverage">0%</strong>
+          <p>Plans with backup strategy</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECOVERY PLAN FORM -->
+  <section class="dr-panel dr-form-panel" id="dr-form-panel">
+    <h3 id="dr-form-title">＋ Create Recovery Plan</h3>
+    <p class="dr-sub">Define recovery objectives, backup strategy, responsibilities and testing.</    </p>
+
+    <form id="dr-form">
+      <div class="dr-form-grid">
+
+        <div class="dr-field dr-full">
+          <label for="dr-name">System / Service Name *</label>
+          <input id="dr-name" maxlength="120" required placeholder="e.g. Company Database">
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-category">System Category</label>
+          <select id="dr-category">
+            <option>Database</option>
+            <option>Web Application</option>
+            <option>Network Infrastructure</option>
+            <option>Email System</option>
+            <option>Cloud Service</option>
+            <option>Endpoint / Devices</option>
+            <option>Business Operations</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-owner">Recovery Owner</label>
+          <input id="dr-owner" maxlength="80" placeholder="e.g. IT Operations">
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-rto">RTO — Recovery Time Objective (hours)</label>
+          <input id="dr-rto" type="number" min="0" max="8760" step="0.5" value="4">
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-rpo">RPO — Recovery Point Objective (hours)</label>
+          <input id="dr-rpo" type="number" min="0" max="8760" step="0.5" value="1">
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-backup">Backup Strategy</label>
+          <select id="dr-backup">
+            <option>Daily Backup</option>
+            <option>Hourly Backup</option>
+            <option>Continuous Replication</option>
+            <option>Weekly Backup</option>
+            <option>Offline Backup</option>
+            <option>Cloud Backup</option>
+            <option>Not Defined</option>
+          </select>
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-status">Plan Status</label>
+          <select id="dr-status">
+            <option>Draft</option>
+            <option>In Progress</option>
+            <option>Ready</option>
+            <option>Under Review</option>
+          </select>
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-test">Recovery Test Status</label>
+          <select id="dr-test">
+            <option>Not Tested</option>
+            <option>Passed</option>
+            <option>Failed</option>
+            <option>Scheduled</option>
+          </select>
+        </div>
+
+        <div class="dr-field">
+          <label for="dr-test-date">Last / Planned Test Date</label>
+          <input id="dr-test-date" type="date">
+        </div>
+
+        <div class="dr-field dr-full">
+          <label for="dr-procedure">Recovery Procedure</label>
+          <textarea id="dr-procedure" maxlength="1500" placeholder="Describe the steps required to recover this system..."></textarea>
+        </div>
+
+        <div class="dr-field dr-full">
+          <label for="dr-backup-location">Backup Location</label>
+          <input id="dr-backup-location" maxlength="200" placeholder="e.g. Encrypted cloud storage / offsite location">
+        </div>
+
+        <div class="dr-field dr-full">
+          <label for="dr-dependencies">Dependencies / Notes</label>
+          <textarea id="dr-dependencies" maxlength="800" placeholder="Required systems, contacts, equipment, access, or additional notes"></textarea>
+        </div>
+
+      </div>
+
+      <div class="dr-form-actions">
+        <button class="dr-btn dr-primary" id="dr-save" type="submit">Save Recovery Plan</button>
+        <button class="dr-btn" id="dr-cancel" type="button">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- RECOVERY PLAN REGISTER -->
+  <section class="dr-panel" style="margin-top:20px;">
+    <h3>📑 Recovery Plan Register</h3>
+    <p class="dr-sub">Search, update, test and manage your recovery plans.</p>
+
+    <div class="dr-filters">
+      <input type="search" id="dr-search" placeholder="🔎 Search plans...">
+      <select id="dr-status-filter">
+        <option value="All">All Plan Statuses</option>
+        <option>Draft</option>
+        <option>In Progress</option>
+        <option>Ready</option>
+        <option>Under Review</option>
+      </select>
+      <select id="dr-test-filter">
+        <option value="All">All Test Statuses</option>
+        <option>Not Tested</option>
+        <option>Passed</option>
+        <option>Failed</option>
+        <option>Scheduled</option>
+      </select>
+      <button class="dr-btn" id="dr-reset">Reset</button>
+    </div>
+
+    <div class="dr-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>System / Plan</th>
+            <th>RTO</th>
+            <th>RPO</th>
+            <th>Backup</th>
+            <th>Plan Status</th>
+            <th>Test Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="dr-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RECOVERY CHECKLIST -->
+  <section class="dr-layout">
+    <div class="dr-panel">
+      <h3>📝 Recovery Readiness Checklist</h3>
+      <p class="dr-sub">General readiness guidance for your recovery planning.</p>
+      <div class="dr-health-list">
+        <div class="dr-health-row">
+          <span class="dr-health-name">Backup copies maintained</span>
+          <span class="dr-pill dr-blue">CHECK</span>
+        </div>
+        <div class="dr-health-row">
+          <span class="dr-health-name">Restore procedure documented</span>
+          <span class="dr-pill dr-blue">CHECK</span>
+        </div>
+        <div class="dr-health-row">
+          <span class="dr-health-name">Recovery owner assigned</span>
+          <span class="dr-pill dr-blue">CHECK</span>
+        </div>
+        <div class="dr-health-row">
+          <span class="dr-health-name">Recovery testing scheduled</span>
+          <span class="dr-pill dr-blue">CHECK</span>
+        </div>
+        <div class="dr-health-row">
+          <span class="dr-health-name">Dependencies documented</span>
+          <span class="dr-pill dr-blue">CHECK</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dr-panel">
+      <h3>🔄 Recovery Testing</h3>
+      <p class="dr-sub">Why recovery tests are important</p>
+
+      <div class="dr-test-box">
+        <h4>Backup Verification</h4>
+        <p>Confirm backups exist, are accessible and can be restored. Verify the backup integrity and protection of stored data.</p>
+      </div>
+
+      <div class="dr-test-box">
+        <h4>Restoration Exercise</h4>
+        <p>Test restoration in a controlled environment and document actual recovery time against the RTO.</p>
+      </div>
+
+      <div class="dr-test-box">
+        <h4>Business Continuity</h4>
+        <p>Identify alternative processes, communication arrangements and critical dependencies during disruption.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="dr-note">
+    ⚠️ Demo environment: Recovery plans are stored in this browser only. This dashboard does not perform actual backups, restore files, monitor infrastructure or verify backup integrity. Always maintain real backups and test recovery independently.
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <p>© 2026 Cybersecurity Policy & Incident Response Project</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  const KEY = "cyber_recovery_center_v1";
+  const $ = id => document.getElementById(id);
+
+  let plans = [];
+  let editingId = null;
+
+  const demoPlans = [
+    {
+      id:"recovery-1",
+      name:"Company Database",
+      category:"Database",
+      owner:"IT Operations",
+      rto:4,
+      rpo:1,
+      backup:"Daily Backup",
+      status:"Ready",
+      test:"Passed",
+      testDate:"",
+      procedure:"1. Confirm database service status.\n2. Isolate affected systems if necessary.\n3. Restore from verified backup.\n4. Validate data and application connectivity.\n5. Document restoration results.",
+      backupLocation:"Secure backup storage",
+      dependencies:"Database administrator, application server and network access."
+    },
+    {
+      id:"recovery-2",
+      name:"Corporate Email",
+      category:"Email System",
+      owner:"IT Support",
+      rto:8,
+      rpo:4,
+      backup:"Cloud Backup",
+      status:"In Progress",
+      test:"Scheduled",
+      testDate:"",
+      procedure:"Review service availability, verify account access and restore email data or configuration if required.",
+      backupLocation:"Cloud backup",
+      dependencies:"Identity provider, DNS and internet connectivity."
+    },
+    {
+      id:"recovery-3",
+      name:"Web Application",
+      category:"Web Application",
+      owner:"Development Team",
+      rto:6,
+      rpo:2,
+      backup:"Daily Backup",
+      status:"Under Review",
+      test:"Not Tested",
+      testDate:"",
+      procedure:"Restore application files and configuration, validate dependencies, test the application and return service to production after verification.",
+      backupLocation:"Offsite repository",
+      dependencies:"Database, hosting environment, DNS and secrets."
+    },
+    {
+      id:"recovery-4",
+      name:"Network Infrastructure",
+      category:"Network Infrastructure",
+      owner:"Network Team",
+      rto:2,
+      rpo:1,
+      backup:"Offline Backup",
+      status:"Ready",
+      test:"Passed",
+      testDate:"",
+      procedure:"Restore network device configuration, validate routing, test connectivity and document results.",
+      backupLocation:"Encrypted configuration archive",
+      dependencies:"Network devices, configuration archive and administrator access."
+    }
+  ];
+
+  function save(){
+    localStorage.setItem(KEY,JSON.stringify(plans));
+  }
+
+  function load(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(KEY));
+      if(Array.isArray(saved)){
+        plans = saved;
+      }else{
+        plans = demoPlans;
+        save();
+      }
+    }catch(e){
+      plans = demoPlans;
+      save();
+    }
+  }
+
+  function average(field){
+    if(!plans.length) return 0;
+    return plans.reduce((sum,p)=>sum+Number(p[field]||0),0)/plans.length;
+  }
+
+  function formatHours(hours){
+    hours=Number(hours)||0;
+    if(hours===0) return "0h";
+    if(hours<1) return Math.round(hours*60)+"m";
+    if(hours%1===0) return hours+"h";
+    return hours+"h";
+  }
+
+  function escapeHTML(value){
+    return String(value??"")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function testClass(value){
+    if(value==="Passed") return "dr-green";
+    if(value==="Failed") return "dr-red";
+    if(value==="Scheduled") return "dr-blue";
+    return "dr-yellow";
+  }
+
+  function statusClass(value){
+    if(value==="Ready") return "dr-green";
+    if(value==="In Progress") return "dr-blue";
+    if(value==="Under Review") return "dr-yellow";
+    return "dr-red";
+  }
+
+  function renderStats(){
+    $("dr-total").textContent=plans.length;
+    $("dr-ready").textContent=plans.filter(p=>p.status==="Ready").length;
+    $("dr-tested").textContent=plans.filter(p=>p.test==="Passed").length;
+    $("dr-attention").textContent=plans.filter(p=>p.status!=="Ready").length;
+  }
+
+  function renderOverview(){
+    const ready=plans.filter(p=>p.status==="Ready").length;
+    const inProgress=plans.filter(p=>p.status==="In Progress").length;
+    const review=plans.filter(p=>p.status==="Under Review").length;
+    const draft=plans.filter(p=>p.status==="Draft").length;
+
+    const health=[
+      ["Recovery Plans Ready",ready,plans.length],
+      ["In Progress",inProgress,plans.length],
+      ["Under Review",review,plans.length],
+      ["Draft Plans",draft,plans.length]
+    ];
+
+    $("dr-health").innerHTML="";
+
+    health.forEach(item=>{
+      const row=document.createElement("div");
+      row.className="dr-health-row";
+      row.innerHTML=`
+        <span class="dr-health-name">${escapeHTML(item[0])}</span>
+        <span class="dr-pill dr-blue">${item[1]} / ${item[2]}</span>
+      `;
+      $("dr-health").appendChild(row);
+    });
+
+    $("dr-avg-rto").textContent=plans.length?formatHours(average("rto")):"—";
+    $("dr-avg-rpo").textContent=plans.length?formatHours(average("rpo")):"—";
+
+    const testedPlans=plans.filter(p=>p.testDate);
+    if(testedPlans.length){
+      const latest=testedPlans
+        .map(p=>p.testDate)
+        .sort()
+        .reverse()[0];
+      $("dr-last-test").textContent=latest;
+    }else{
+      $("dr-last-test").textContent="—";
+    }
+
+    const coverage=plans.length
+      ?Math.round(plans.filter(p=>p.backup&&p.backup!=="Not Defined").length/plans.length*100)
+      :0;
+
+    $("dr-coverage").textContent=coverage+"%";
+  }
+
+  function renderTable(){
+    const body=$("dr-table-body");
+    body.innerHTML="";
+
+    const q=$("dr-search").value.toLowerCase().trim();
+    const statusFilter=$("dr-status-filter").value;
+    const testFilter=$("dr-test-filter").value;
+
+    const filtered=plans.filter(p=>{
+      const searchable=[
+        p.name,p.category,p.owner,p.backup,p.procedure,
+        p.backupLocation,p.dependencies
+      ].join(" ").toLowerCase();
+
+      if(q&&!searchable.includes(q)) return false;
+      if(statusFilter!=="All"&&p.status!==statusFilter) return false;
+      if(testFilter!=="All"&&p.test!==testFilter) return false;
+      return true;
+    });
+
+    if(!filtered.length){
+      body.innerHTML='<tr><td colspan="7" class="dr-empty">No recovery plans found.</td></tr>';
+      return;
+    }
+
+    filtered.forEach(p=>{
+      const row=document.createElement("tr");
+
+      row.innerHTML=`
+        <td>
+          <div class="dr-name">${escapeHTML(p.name)}</div>
+          <div class="dr-small">${escapeHTML(p.category)} · ${escapeHTML(p.owner||"Unassigned")}</div>
+        </td>
+        <td>${formatHours(p.rto)}</td>
+        <td>${formatHours(p.rpo)}</td>
+        <td>${escapeHTML(p.backup)}</td>
+        <td>
+          <select class="dr-select" data-status="${escapeHTML(p.id)}">
+            <option ${p.status==="Draft"?"selected":""}>Draft</option>
+            <option ${p.status==="In Progress"?"selected":""}>In Progress</option>
+            <option ${p.status==="Ready"?"selected":""}>Ready</option>
+            <option ${p.status==="Under Review"?"selected":""}>Under Review</option>
+          </select>
+        </td>
+        <td><span class="dr-pill ${testClass(p.test)}">${escapeHTML(p.test)}</span></td>
+        <td>
+          <button class="dr-mini" data-edit="${escapeHTML(p.id)}">Edit</button>
+          <button class="dr-mini dr-delete" data-delete="${escapeHTML(p.id)}">Delete</button>
+        </td>
+      `;
+      body.appendChild(row);
+    });
+
+    body.querySelectorAll("[data-status]").forEach(select=>{
+      select.addEventListener("change",e=>{
+        const plan=plans.find(p=>p.id===e.target.dataset.status);
+        if(!plan) return;
+        plan.status=e.target.value;
+        save();
+        renderAll();
+      });
+    });
+
+    body.querySelectorAll("[data-edit]").forEach(button=>{
+      button.addEventListener("click",()=>editPlan(button.dataset.edit));
+    });
+
+    body.querySelectorAll("[data-delete]").forEach(button=>{
+      button.addEventListener("click",()=>deletePlan(button.dataset.delete));
+    });
+  }
+
+  function renderAll(){
+    renderStats();
+    renderOverview();
+    renderTable();
+  }
+
+  function openForm(){
+    editingId=null;
+    $("dr-form").reset();
+    $("dr-rto").value=4;
+    $("dr-rpo").value=1;
+    $("dr-form-title").textContent="＋ Create Recovery Plan";
+    $("dr-save").textContent="Save Recovery Plan";
+    $("dr-form-panel").classList.add("dr-visible");
+    $("dr-form-panel").scrollIntoView({behavior:"smooth"});
+    $("dr-name").focus();
+  }
+
+  function closeForm(){
+    $("dr-form-panel").classList.remove("dr-visible");
+    $("dr-form").reset();
+    editingId=null;
+  }
+
+  function editPlan(id){
+    const p=plans.find(x=>x.id===id);
+    if(!p) return;
+    editingId=id;
+
+    $("dr-name").value=p.name||"";
+    $("dr-category").value=p.category||"Other";
+    $("dr-owner").value=p.owner||"";
+    $("dr-rto").value=p.rto??4;
+    $("dr-rpo").value=p.rpo??1;
+    $("dr-backup").value=p.backup||"Not Defined";
+    $("dr-status").value=p.status||"Draft";
+    $("dr-test").value=p.test||"Not Tested";
+    $("dr-test-date").value=p.testDate||"";
+    $("dr-procedure").value=p.procedure||"";
+    $("dr-backup-location").value=p.backupLocation||"";
+    $("dr-dependencies").value=p.dependencies||"";
+
+    $("dr-form-title").textContent="✏️ Edit Recovery Plan";
+    $("dr-save").textContent="Update Recovery Plan";
+    $("dr-form-panel").classList.add("dr-visible");
+    $("dr-form-panel").scrollIntoView({behavior:"smooth"});
+  }
+
+  function deletePlan(id){
+    const p=plans.find(x=>x.id===id);
+    if(!p) return;
+    if(!confirm("Delete recovery plan for "+p.name+"?")) return;
+    plans=plans.filter(x=>x.id!==id);
+    save();
+    renderAll();
+  }
+
+  $("dr-add").addEventListener("click",openForm);
+  $("dr-cancel").addEventListener("click",closeForm);
+
+  $("dr-form").addEventListener("submit",e=>{
+    e.preventDefault();
+
+    const item={
+      name:$("dr-name").value.trim(),
+      category:$("dr-category").value,
+      owner:$("dr-owner").value.trim(),
+      rto:Number($("dr-rto").value),
+      rpo:Number($("dr-rpo").value),
+      backup:$("dr-backup").value,
+      status:$("dr-status").value,
+      test:$("dr-test").value,
+      testDate:$("dr-test-date").value,
+      procedure:$("dr-procedure").value.trim(),
+      backupLocation:$("dr-backup-location").value.trim(),
+      dependencies:$("dr-dependencies").value.trim()
+    };
+
+    if(!item.name) return;
+
+    if(editingId){
+      const old=plans.find(p=>p.id===editingId);
+      if(old) Object.assign(old,item);
+    }else{
+      item.id="recovery-"+Date.now();
+      item.created=new Date().toISOString();
+      plans.unshift(item);
+    }
+
+    save();
+    closeForm();
+    renderAll();
+  });
+
+  ["dr-search","dr-status-filter","dr-test-filter"].forEach(id=>{
+    $(id).addEventListener("input",renderTable);
+    $(id).addEventListener("change",renderTable);
+  });
+
+  $("dr-reset").addEventListener("click",()=>{
+    $("dr-search").value="";
+    $("dr-status-filter").value="All";
+    $("dr-test-filter").value="All";
+    renderTable();
+  });
+
+  $("dr-export").addEventListener("click",()=>{
+    if(!plans.length){
+      alert("No recovery plans to export.");
+      return;
+    }
+
+    const headers=[
+      "System","Category","Owner","RTO Hours","RPO Hours",
+      "Backup","Plan Status","Test Status","Test Date",
+      "Procedure","Backup Location","Dependencies"
+    ];
+
+    const rows=plans.map(p=>[
+      p.name,p.category,p.owner,p.rto,p.rpo,p.backup,
+      p.status,p.test,p.testDate,p.procedure,p.backupLocation,p.dependencies
+    ]);
+
+    const csv=[headers,...rows]
+      .map(row=>row.map(value=>'"'+String(value??"").replaceAll('"','""')+'"').join(","))
+      .join("\n");
+
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;
+    link.download="disaster-recovery-plans.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+
+  load();
+  renderAll();
+
+})();
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybersecurity Policy Management Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+#pm-app{
+  --panel:#121d30;--border:#263750;--muted:#93a6bf;
+  --text:#e8eef8;--blue:#3b82f6;
+  color:var(--text);padding:25px 0 45px;
+}
+#pm-app *{box-sizing:border-box}
+#pm-app .pm-wrap{max-width:1250px;margin:auto;padding:0 20px}
+#pm-app button,#pm-app input,#pm-app select,#pm-app textarea{font:inherit}
+#pm-app button{cursor:pointer}
+#pm-app h2,#pm-app h3,#pm-app h4{margin-top:0}
+#pm-app .pm-top{
+ display:flex;justify-content:space-between;align-items:center;
+ flex-wrap:wrap;gap:14px;margin-bottom:22px
+}
+#pm-app .pm-top h2{font-size:28px;margin-bottom:6px}
+#pm-app .pm-top p{color:var(--muted);margin:0}
+#pm-app .pm-btn{
+ border:1px solid var(--border);background:#18263d;color:var(--text);
+ padding:10px 14px;border-radius:9px;font-weight:600
+}
+#pm-app .pm-btn:hover{filter:brightness(1.15)}
+#pm-app .pm-primary{background:#2563eb;border-color:#3b82f6}
+#pm-app .pm-danger{background:#451e2a;border-color:#793145;color:#fecdd3}
+#pm-app .pm-panel,#pm-app .pm-stat{
+ background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:18px
+}
+#pm-app .pm-stats{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px
+}
+#pm-app .pm-stat-label{color:var(--muted);font-size:13px}
+#pm-app .pm-stat-value{font-size:29px;font-weight:800;margin-top:8px}
+#pm-app .pm-stat-foot{font-size:12px;color:var(--muted);margin-top:6px}
+#pm-app .pm-stat-icon{float:right;font-size:22px}
+#pm-app .pm-section{margin-top:22px}
+#pm-app .pm-section-title{font-size:19px;margin-bottom:6px}
+#pm-app .pm-section-sub{color:var(--muted);font-size:12px;margin:0 0 16px}
+#pm-app .pm-toolbar{
+ display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px
+}
+#pm-app .pm-input,#pm-app .pm-select,#pm-app .pm-textarea{
+ background:#0e192b;color:var(--text);border:1px solid var(--border);
+ border-radius:9px;padding:11px 12px;outline:none;width:100%
+}
+#pm-app .pm-input:focus,#pm-app .pm-select:focus,#pm-app .pm-textarea:focus{
+ border-color:#3b82f6
+}
+#pm-app .pm-search{flex:1;min-width:200px}
+#pm-app .pm-select{width:auto;min-width:160px}
+#pm-app .pm-textarea{min-height:110px;resize:vertical}
+#pm-app .pm-table-wrap{overflow:auto}
+#pm-app table{width:100%;border-collapse:collapse;min-width:780px}
+#pm-app th,#pm-app td{
+ text-align:left;padding:13px 11px;border-bottom:1px solid var(--border);font-size:12px
+}
+#pm-app th{color:var(--muted);font-weight:600}
+#pm-app td{vertical-align:middle}
+#pm-app .pm-policy-name{font-weight:700;font-size:13px}
+#pm-app .pm-policy-desc{color:var(--muted);margin-top:4px;font-size:11px}
+#pm-app .pm-badge{
+ display:inline-block;border-radius:20px;padding:5px 9px;
+ font-size:10px;font-weight:800;white-space:nowrap
+}
+#pm-app .pm-active{background:#123d2b;color:#86efac}
+#pm-app .pm-draft{background:#3c3217;color:#fcd34d}
+#pm-app .pm-review{background:#17365c;color:#93c5fd}
+#pm-app .pm-actions{display:flex;gap:6px;flex-wrap:wrap}
+#pm-app .pm-small-btn{
+ background:#18263d;color:var(--text);border:1px solid var(--border);
+ padding:7px 9px;border-radius:7px;font-size:11px
+}
+#pm-app .pm-empty{padding:25px;text-align:center;color:var(--muted)}
+#pm-app .pm-grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+#pm-app .pm-category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+#pm-app .pm-category{
+ background:#0e192b;border:1px solid var(--border);border-radius:11px;padding:15px
+}
+#pm-app .pm-category strong{font-size:13px}
+#pm-app .pm-category p{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:0}
+#pm-app .pm-checklist label{
+ display:flex;align-items:flex-start;gap:10px;
+ padding:12px 0;border-bottom:1px solid var(--border);
+ font-size:13px;line-height:1.6
+}
+#pm-app .pm-checklist input{margin-top:4px;accent-color:#3b82f6}
+#pm-app .pm-checklist label.checked span{text-decoration:line-through;color:var(--muted)}
+#pm-app .pm-check-progress{
+ height:9px;background:#243550;border-radius:20px;overflow:hidden;margin:12px 0
+}
+#pm-app .pm-check-fill{height:100%;background:#3b82f6;width:0;transition:width .3s}
+#pm-app .pm-modal{
+ display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);
+ z-index:9999;overflow:auto;padding:20px
+}
+#pm-app .pm-modal.pm-open{display:flex;align-items:flex-start;justify-content:center}
+#pm-app .pm-modal-box{
+ background:#121d30;border:1px solid var(--border);border-radius:15px;
+ width:100%;max-width:700px;margin:auto;padding:22px
+}
+#pm-app .pm-modal-head{
+ display:flex;justify-content:space-between;gap:10px;align-items:center
+}
+#pm-app .pm-modal-head h3{margin:0}
+#pm-app .pm-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#pm-app .pm-field{margin-bottom:14px}
+#pm-app .pm-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}
+#pm-app .pm-field.pm-full{grid-column:1/-1}
+#pm-app .pm-view-content{font-size:13px;line-height:1.8;white-space:pre-wrap}
+#pm-app .pm-view-content h4{margin-top:18px}
+#pm-app .pm-modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:15px}
+#pm-app .pm-compliance-result{font-size:13px;color:var(--muted)}
+#pm-app .pm-note{
+ margin-top:18px;padding:13px;background:#172438;border:1px solid var(--border);
+ border-radius:9px;color:var(--muted);font-size:12px;line-height:1.7
+}
+@media(max-width:900px){
+ #pm-app .pm-stats{grid-template-columns:repeat(2,1fr)}
+ #pm-app .pm-category-grid{grid-template-columns:repeat(2,1fr)}
+ #pm-app .pm-grid2{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ #pm-app .pm-wrap{padding:0 13px}
+ #pm-app .pm-top h2{font-size:23px}
+ #pm-app .pm-stat{padding:13px}
+ #pm-app .pm-stat-value{font-size:23px}
+ #pm-app .pm-category-grid{grid-template-columns:1fr}
+ #pm-app .pm-form-grid{grid-template-columns:1fr}
+ #pm-app .pm-panel{padding:14px}
+ #pm-app .pm-modal{padding:10px}
+ #pm-app .pm-modal-box{padding:15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛡 Cybersecurity Policy & Incident Response</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="policies.html">Policies</a>
+    <a href="incident.html">Incident Response</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="awareness.html">Awareness</a>
+    <a href="risk.html">Risk Assessment</a>
+  </nav>
+</header>
+
+<main id="pm-app">
+<div class="pm-wrap">
+
+  <div class="pm-top">
+    <div>
+      <h2>📋 Policy Management Center</h2>
+      <p>Create, organize, review and manage your cybersecurity policies.</p>
+    </div>
+    <button class="pm-btn pm-primary" id="pm-add">＋ Create Policy</button>
+  </div>
+
+  <!-- STATS -->
+  <section class="pm-stats">
+    <div class="pm-stat">
+      <span class="pm-stat-icon">📚</span>
+      <div class="pm-stat-label">Total Policies</div>
+      <div class="pm-stat-value" id="pm-total">0</div>
+      <div class="pm-stat-foot">Policies in register</div>
+    </div>
+    <div class="pm-stat">
+      <span class="pm-stat-icon">🟢</span>
+      <div class="pm-stat-label">Active</div>
+      <div class="pm-stat-value" id="pm-active">0</div>
+      <div class="pm-stat-foot">Currently active</div>
+    </div>
+    <div class="pm-stat">
+      <span class="pm-stat-icon">📝</span>
+      <div class="pm-stat-label">Draft</div>
+      <div class="pm-stat-value" id="pm-draft">0</div>
+      <div class="pm-stat-foot">Under preparation</div>
+    </div>
+    <div class="pm-stat">
+      <span class="pm-stat-icon">🔄</span>
+      <div class="pm-stat-label">Review Required</div>
+      <div class="pm-stat-value" id="pm-review">0</div>
+      <div class="pm-stat-foot">Policies needing review</div>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="pm-section pm-panel">
+    <h3 class="pm-section-title">📑 Policy Register</h3>
+    <p class="pm-section-sub">Search, filter, view, edit or export your policy records.</p>
+
+    <div class="pm-toolbar">
+      <input class="pm-input pm-search" id="pm-search" placeholder="🔎 Search policy name, description, owner...">
+      <select class="pm-select" id="pm-category-filter">
+        <option value="">All Categories</option>
+        <option>Access Control</option>
+        <option>Data Protection</option>
+        <option>Network Security</option>
+        <option>Incident Management</option>
+        <option>Business Continuity</option>
+        <option>Acceptable Use</option>
+        <option>Other</option>
+      </select>
+      <select class="pm-select" id="pm-status-filter">
+        <option value="">All Statuses</option>
+        <option>Active</option>
+        <option>Draft</option>
+        <option>Review</option>
+      </select>
+      <button class="pm-btn" id="pm-export">⬇ Export CSV</button>
+    </div>
+
+    <div class="pm-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th>Category</th>
+            <th>Owner</th>
+            <th>Review Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="pm-table"></tbody>
+      </table>
+    </div>
+    <div class="pm-empty" id="pm-empty" style="display:none;">No policies match your search.</div>
+  </section>
+
+  <!-- POLICY CATEGORIES -->
+  <section class="pm-section">
+    <h3 class="pm-section-title">🗂 Policy Categories</h3>
+    <p class="pm-section-sub">Organize policies across important cybersecurity domains.</p>
+
+    <div class="pm-category-grid">
+      <div class="pm-category">
+        <strong>🔑 Access Control</strong>
+        <p>Identity, authentication, authorization and access privileges.</p>
+      </div>
+      <div class="pm-category">
+        <strong>🗄 Data Protection</strong>
+        <p>Data classification, privacy, encryption and secure handling.</p>
+      </div>
+      <div class="pm-category">
+        <strong>🌐 Network Security</strong>
+        <p>Network controls, secure connectivity and infrastructure protection.</p>
+      </div>
+      <div class="pm-category">
+        <strong>🚨 Incident Management</strong>
+        <p>Security incident reporting, investigation and response.</p>
+      </div>
+      <div class="pm-category">
+        <strong>🔄 Business Continuity</strong>
+        <p>Recovery plans, backups and service continuity.</p>
+      </div>
+      <div class="pm-category">
+        <strong>💻 Acceptable Use</strong>
+        <p>Responsible use of organizational devices and resources.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPLIANCE CHECKLIST -->
+  <section class="pm-section pm-grid2">
+    <div class="pm-panel">
+      <h3 class="pm-section-title">☑ Policy Compliance Checklist</h3>
+      <p class="pm-section-sub">Track basic policy management practices.</p>
+
+      <div id="pm-checklist" class="pm-checklist"></div>
+
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:15px;">
+        <strong>Checklist Progress</strong>
+        <span id="pm-check-text">0/8</span>
+      </div>
+      <div class="pm-check-progress">
+        <div class="pm-check-fill" id="pm-check-fill"></div>
+      </div>
+      <div class="pm-compliance-result" id="pm-check-result">Complete the checklist to track your policy management progress.</div>
+    </div>
+
+    <div class="pm-panel">
+      <h3 class="pm-section-title">📌 Policy Management Guidelines</h3>
+      <p class="pm-section-sub">Recommended practices for keeping policies effective.</p>
+
+      <div style="font-size:13px;line-height:1.8;">
+        <p><strong>1. Assign ownership</strong><br><span style="color:var(--muted)">Every policy should have a responsible owner.</span></p>
+        <p><strong>2. Review regularly</strong><br><span style="color:var(--muted)">Policies should be reviewed periodically and when significant changes occur.</span></p>
+        <p><strong>3. Communicate changes</strong><br><span style="color:var(--muted)">Employees should be informed when policies are updated.</span></p>
+        <p><strong>4. Maintain records</strong><br><span style="color:var(--muted)">Keep versions, approvals and review history documented.</span></p>
+        <p><strong>5. Measure compliance</strong><br><span style="color:var(--muted)">Track implementation and address gaps.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="pm-note">
+    ⚠️ Demonstration policy management tool. Policies stored here are local browser records and are not official approved organizational policies unless reviewed, approved and implemented through the appropriate process.
+  </div>
+
+</div>
+
+<!-- CREATE / EDIT MODAL -->
+<div class="pm-modal" id="pm-edit-modal">
+  <div class="pm-modal-box">
+    <div class="pm-modal-head">
+      <h3 id="pm-form-title">Create Policy</h3>
+      <button class="pm-btn" id="pm-close-form">✕ Close</button>
+    </div>
+
+    <form id="pm-form">
+      <input type="hidden" id="pm-id">
+
+      <div class="pm-form-grid">
+        <div class="pm-field">
+          <label>Policy Name *</label>
+          <input class="pm-input" id="pm-name" required maxlength="120" placeholder="e.g. Password Security Policy">
+        </div>
+
+        <div class="pm-field">
+          <label>Category *</label>
+          <select class="pm-select" id="pm-category" required style="width:100%">
+            <option value="">Select Category</option>
+            <option>Access Control</option>
+            <option>Data Protection</option>
+            <option>Network Security</option>
+            <option>Incident Management</option>
+            <option>Business Continuity</option>
+            <option>Acceptable Use</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="pm-field">
+          <label>Policy Owner *</label>
+          <input class="pm-input" id="pm-owner" required placeholder="Department or responsible person">
+        </div>
+
+        <div class="pm-field">
+          <label>Review Date</label>
+          <input class="pm-input" id="pm-date" type="date">
+        </div>
+
+        <div class="pm-field">
+          <label>Status</label>
+          <select class="pm-select" id="pm-status" style="width:100%">
+            <option>Draft</option>
+            <option>Active</option>
+            <option>Review</option>
+          </select>
+        </div>
+
+        <div class="pm-field">
+          <label>Version</label>
+          <input class="pm-input" id="pm-version" placeholder="e.g. 1.0">
+        </div>
+
+        <div class="pm-field pm-full">
+          <label>Short Description *</label>
+          <textarea class="pm-textarea" id="pm-description" required placeholder="Describe the purpose and scope of this policy..."></textarea>
+        </div>
+
+        <div class="pm-field pm-full">
+          <label>Policy Content / Requirements</label>
+          <textarea class="pm-textarea" id="pm-content" placeholder="Write the detailed policy requirements, rules, responsibilities and procedures..."></textarea>
+        </div>
+      </div>
+
+      <div class="pm-modal-actions">
+        <button type="button" class="pm-btn" id="pm-cancel-form">Cancel</button>
+        <button type="submit" class="pm-btn pm-primary">💾 Save Policy</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- VIEW POLICY MODAL -->
+<div class="pm-modal" id="pm-view-modal">
+  <div class="pm-modal-box">
+    <div class="pm-modal-head">
+      <h3>📄 Policy Details</h3>
+      <button class="pm-btn" id="pm-close-view">✕ Close</button>
+    </div>
+    <div class="pm-view-content" id="pm-view-content"></div>
+    <div class="pm-modal-actions">
+      <button class="pm-btn" id="pm-view-edit">✏ Edit Policy</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>© 2026 Cybersecurity Policy & Incident Response Project</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  const KEY="cyber_policy_center_v1";
+  const CHECK_KEY="cyber_policy_checklist_v1";
+  const $=id=>document.getElementById(id);
+
+  const categories=[
+    "Access Control","Data Protection","Network Security",
+    "Incident Management","Business Continuity","Acceptable Use","Other"
+  ];
+
+  const checks=[
+    "Policies have clearly assigned owners.",
+    "Policies are reviewed periodically.",
+    "Policies have documented approval.",
+    "Employees are informed about relevant policies.",
+    "Access control rules are documented.",
+    "Incident reporting procedures are documented.",
+    "Data protection requirements are documented.",
+    "Policy versions and changes are recorded."
+  ];
+
+  const defaultPolicies=[
+    {
+      id:"p1",name:"Password & Authentication Policy",
+      category:"Access Control",owner:"IT Security",
+      date:"2027-01-15",status:"Active",version:"1.0",
+      description:"Establishes requirements for secure passwords and authentication.",
+      content:"Users must use unique passwords, protect credentials, avoid sharing passwords and enable multi-factor authentication where available. Compromised credentials must be reported promptly."
+    },
+    {
+      id:"p2",name:"Access Control Policy",
+      category:"Access Control",owner:"IT Department",
+      date:"2027-02-01",status:"Active",version:"1.0",
+      description:"Defines how access to systems and information is granted, reviewed and revoked.",
+      content:"Access must be based on business need and least privilege. Accounts must be authorized, reviewed periodically and promptly disabled when no longer required."
+    },
+    {
+      id:"p3",name:"Data Protection Policy",
+      category:"Data Protection",owner:"Compliance",
+      date:"2027-02-10",status:"Active",version:"1.0",
+      description:"Protects organizational and personal data from unauthorized access or disclosure.",
+      content:"Sensitive information must be classified, handled securely, stored in approved locations and shared only with authorized recipients. Secure disposal procedures must be followed."
+    },
+    {
+      id:"p4",name:"Incident Response Policy",
+      category:"Incident Management",owner:"Security Team",
+      date:"2027-03-01",status:"Active",version:"1.0",
+      description:"Defines responsibilities and reporting procedures for cybersecurity incidents.",
+      content:"All suspected security incidents must be reported promptly. The organization will assess, contain, investigate, recover and document incidents using established procedures."
+    },
+    {
+      id:"p5",name:"Network Security Policy",
+      category:"Network Security",owner:"Network Team",
+      date:"2027-03-15",status:"Review",version:"1.0",
+      description:"Establishes standards for secure network infrastructure and connections.",
+      content:"Network infrastructure must be securely configured, monitored and maintained. Unapproved devices and connections must not be introduced. Network access must be controlled."
+    },
+    {
+      id:"p6",name:"Backup & Recovery Policy",
+      category:"Business Continuity",owner:"IT Operations",
+      date:"2027-04-01",status:"Active",version:"1.0",
+      description:"Defines backup, restoration and recovery requirements for critical systems.",
+      content:"Critical data must be backed up according to defined schedules. Backup integrity must be tested. Recovery procedures must be documented and periodically exercised."
+    },
+    {
+      id:"p7",name:"Acceptable Use Policy",
+      category:"Acceptable Use",owner:"HR & IT",
+      date:"2027-04-15",status:"Draft",version:"0.1",
+      description:"Defines acceptable use of organizational technology and information resources.",
+      content:"Users must use organizational resources responsibly, follow security requirements, protect company information and avoid unauthorized software or activities."
+    },
+    {
+      id:"p8",name:"Remote Work Security Policy",
+      category:"Network Security",owner:"IT Security",
+      date:"2027-05-01",status:"Draft",version:"0.1",
+      description:"Establishes security requirements for remote work and mobile access.",
+      content:"Remote workers must protect devices, use approved connectivity, secure their workspace, avoid exposing confidential information and report lost devices or suspicious activity."
+    }
+  ];
+
+  let policies=[];
+  let checked=[];
+  let viewingId=null;
+
+  function load(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(KEY));
+      policies=Array.isArray(saved)?saved:structuredClone(defaultPolicies);
+    }catch(e){
+      policies=structuredClone(defaultPolicies);
+    }
+
+    try{
+      const c=JSON.parse(localStorage.getItem(CHECK_KEY));
+      checked=Array.isArray(c)?c:[];
+    }catch(e){checked=[];}
+  }
+
+  function save(){
+    localStorage.setItem(KEY,JSON.stringify(policies));
+  }
+
+  function escapeHtml(s){
+    return String(s??"").replace(/[&<>"']/g,c=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  function badge(status){
+    const cls=status==="Active"?"pm-active":status==="Draft"?"pm-draft":"pm-review";
+    return `<span class="pm-badge ${cls}">${escapeHtml(status)}</span>`;
+  }
+
+  function renderStats(){
+    $("pm-total").textContent=policies.length;
+    $("pm-active").textContent=policies.filter(p=>p.status==="Active").length;
+    $("pm-draft").textContent=policies.filter(p=>p.status==="Draft").length;
+    $("pm-review").textContent=policies.filter(p=>p.status==="Review").length;
+  }
+
+  function renderTable(){
+    const search=$("pm-search").value.trim().toLowerCase();
+    const cat=$("pm-category-filter").value;
+    const status=$("pm-status-filter").value;
+
+    const filtered=policies.filter(p=>{
+      const matchesSearch=[
+        p.name,p.description,p.owner,p.category,p.content
+      ].join(" ").toLowerCase().includes(search);
+      return matchesSearch&&(!cat||p.category===cat)&&(!status||p.status===status);
+    });
+
+    const tbody=$("pm-table");
+    tbody.innerHTML="";
+
+    filtered.forEach(p=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>
+          <div class="pm-policy-name">${escapeHtml(p.name)}</div>
+          <div class="pm-policy-desc">${escapeHtml(p.description)}</div>
+        </td>
+        <td>${escapeHtml(p.category)}</td>
+        <td>${escapeHtml(p.owner)}</td>
+        <td>${escapeHtml(p.date||"Not set")}</td>
+        <td>${badge(p.status)}</td>
+        <td>
+          <div class="pm-actions">
+            <button class="pm-small-btn" data-view="${p.id}">View</button>
+            <button class="pm-small-btn" data-edit="${p.id}">Edit</button>
+            <button class="pm-small-btn" data-delete="${p.id}">Delete</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    $("pm-empty").style.display=filtered.length?"none":"block";
+
+    tbody.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>viewPolicy(b.dataset.view));
+    tbody.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editPolicy(b.dataset.edit));
+    tbody.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deletePolicy(b.dataset.delete));
+  }
+
+  function renderAll(){
+    renderStats();
+    renderTable();
+  }
+
+  function openForm(policy=null){
+    $("pm-form").reset();
+    $("pm-id").value=policy?.id||"";
+    $("pm-form-title").textContent=policy?"Edit Policy":"Create Policy";
+
+    if(policy){
+      $("pm-name").value=policy.name;
+      $("pm-category").value=policy.category;
+      $("pm-owner").value=policy.owner;
+      $("pm-date").value=policy.date||"";
+      $("pm-status").value=policy.status;
+      $("pm-version").value=policy.version||"";
+      $("pm-description").value=policy.description||"";
+      $("pm-content").value=policy.content||"";
+    }
+
+    $("pm-edit-modal").classList.add("pm-open");
+  }
+
+  function closeForm(){
+    $("pm-edit-modal").classList.remove("pm-open");
+  }
+
+  function editPolicy(id){
+    const p=policies.find(x=>x.id===id);
+    if(p)openForm(p);
+  }
+
+  function viewPolicy(id){
+    const p=policies.find(x=>x.id===id);
+    if(!p)return;
+    viewingId=id;
+
+    $("pm-view-content").innerHTML=`
+      <h2>${escapeHtml(p.name)}</h2>
+      <p>${badge(p.status)}</p>
+      <p><strong>Category:</strong> ${escapeHtml(p.category)}</p>
+      <p><strong>Owner:</strong> ${escapeHtml(p.owner)}</p>
+      <p><strong>Review Date:</strong> ${escapeHtml(p.date||"Not set")}</p>
+      <p><strong>Version:</strong> ${escapeHtml(p.version||"Not specified")}</p>
+      <h4>Description</h4>
+      <p>${escapeHtml(p.description)}</p>
+      <h4>Policy Requirements</h4>
+      <p>${escapeHtml(p.content||"No detailed requirements have been added.")}</p>
+    `;
+
+    $("pm-view-modal").classList.add("pm-open");
+  }
+
+  function deletePolicy(id){
+    const p=policies.find(x=>x.id===id);
+    if(!p)return;
+    if(!confirm(`Delete "${p.name}"? This cannot be undone.`))return;
+    policies=policies.filter(x=>x.id!==id);
+    save();
+    renderAll();
+  }
+
+  function savePolicy(e){
+    e.preventDefault();
+
+    const id=$("pm-id").value;
+    const data={
+      id:id||("policy_"+Date.now()),
+      name:$("pm-name").value.trim(),
+      category:$("pm-category").value,
+      owner:$("pm-owner").value.trim(),
+      date:$("pm-date").value,
+      status:$("pm-status").value,
+      version:$("pm-version").value.trim(),
+      description:$("pm-description").value.trim(),
+      content:$("pm-content").value.trim()
+    };
+
+    if(!data.name||!data.category||!data.owner||!data.description){
+      alert("Please complete all required fields.");
+      return;
+    }
+
+    if(id){
+      const index=policies.findIndex(p=>p.id===id);
+      if(index!==-1)policies[index]=data;
+    }else{
+      policies.unshift(data);
+    }
+
+    save();
+    renderAll();
+    closeForm();
+  }
+
+  function exportCSV(){
+    const headers=["Name","Category","Owner","Review Date","Status","Version","Description","Policy Content"];
+    const rows=policies.map(p=>[
+      p.name,p.category,p.owner,p.date,p.status,p.version,p.description,p.content
+    ]);
+
+    const csv=[headers,...rows].map(row=>
+      row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")
+    ).join("\r\n");
+
+    const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="cybersecurity_policy_register.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function renderChecklist(){
+    const container=$("pm-checklist");
+    container.innerHTML="";
+
+    checks.forEach((item,index)=>{
+      const label=document.createElement("label");
+      if(checked.includes(index))label.classList.add("checked");
+      label.innerHTML=`
+        <input type="checkbox" data-check="${index}" ${checked.includes(index)?"checked":""}>
+        <span>${escapeHtml(item)}</span>
+      `;
+      container.appendChild(label);
+    });
+
+    container.querySelectorAll("[data-check]").forEach(input=>{
+      input.onchange=()=>{
+        const index=Number(input.dataset.check);
+        if(input.checked){
+          if(!checked.includes(index))checked.push(index);
+        }else{
+          checked=checked.filter(x=>x!==index);
+        }
+        localStorage.setItem(CHECK_KEY,JSON.stringify(checked));
+        renderChecklist();
+      };
+    });
+
+    const done=checked.length;
+    const percent=Math.round(done/checks.length*100);
+    $("pm-check-text").textContent=done+"/"+checks.length;
+    $("pm-check-fill").style.width=percent+"%";
+
+    $("pm-check-result").textContent=done===checks.length
+      ?"All checklist items completed. Keep reviewing your policies regularly."
+      :done+" of "+checks.length+" checklist items completed.";
+  }
+
+  $("pm-add").onclick=()=>openForm();
+  $("pm-close-form").onclick=closeForm;
+  $("pm-cancel-form").onclick=closeForm;
+  $("pm-form").onsubmit=savePolicy;
+  $("pm-close-view").onclick=()=>$("pm-view-modal").classList.remove("pm-open");
+  $("pm-export").onclick=exportCSV;
+  $("pm-search").oninput=renderTable;
+  $("pm-category-filter").onchange=renderTable;
+  $("pm-status-filter").onchange=renderTable;
+
+  $("pm-view-edit").onclick=()=>{
+    const p=policies.find(x=>x.id===viewingId);
+    $("pm-view-modal").classList.remove("pm-open");
+    if(p)editPolicy(p.id);
+  };
+
+  ["pm-edit-modal","pm-view-modal"].forEach(id=>{
+    $(id).addEventListener("click",e=>{
+      if(e.target===$(id))$(id).classList.remove("pm-open");
+    });
+  });
+
+  $("pm-edit-modal").addEventListener("keydown",e=>{
+    if(e.key==="Escape")closeForm();
+  });
+
+  load();
+  renderAll();
+  renderChecklist();
+
+})();
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>

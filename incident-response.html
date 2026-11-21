@@ -1,0 +1,673 @@
+\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybersecurity Incident Response Center</title>
+
+<style>
+:root {
+    --bg: #0b1220;
+    --panel: #121e30;
+    --panel2: #19283d;
+    --text: #e8f0fa;
+    --muted: #9aacc2;
+    --blue: #38bdf8;
+    --green: #34d399;
+    --orange: #fbbf24;
+    --red: #fb7185;
+    --border: #2b3b51;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+header {
+    padding: 24px 6%;
+    background: #101d30;
+    border-bottom: 1px solid var(--border);
+}
+header h1 { margin: 0 0 14px; }
+nav { display: flex; gap: 20px; flex-wrap: wrap; }
+nav a { color: var(--blue); text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+main {
+    max-width: 1150px;
+    margin: auto;
+    padding: 28px 18px 50px;
+}
+.hero {
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+}
+.intro { color: var(--muted); line-height: 1.6; }
+.section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin: 20px 0;
+}
+h2 { margin-top: 0; }
+h3 { margin-top: 0; }
+.muted { color: var(--muted); }
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+}
+.stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+}
+.stat strong {
+    display: block;
+    font-size: 30px;
+    margin-top: 9px;
+}
+.stat span { color: var(--muted); font-size: 13px; }
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 17px;
+    font-weight: bold;
+    cursor: pointer;
+    background: var(--blue);
+    color: #071522;
+}
+button:hover { filter: brightness(1.12); }
+button.secondary {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+button.success { background: var(--green); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0b1728;
+    color: var(--text);
+    font: inherit;
+}
+label { font-weight: bold; font-size: 14px; }
+textarea { min-height: 85px; resize: vertical; }
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.alert {
+    background: #302719;
+    border: 1px solid #8b6425;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+.incident-card {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 12px 0;
+}
+.incident-card.active { border: 2px solid var(--blue); }
+.incident-card p { color: var(--muted); line-height: 1.5; }
+.tag {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #26384d;
+    margin: 3px;
+}
+.tag.critical { color: #fecaca; background: #581f2a; }
+.tag.high { color: #fed7aa; background: #58351d; }
+.tag.medium { color: #fde68a; background: #51421b; }
+.tag.low { color: #a7f3d0; background: #164333; }
+.workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 9px;
+    margin: 20px 0;
+}
+.stage {
+    text-align: center;
+    padding: 13px 5px;
+    background: #1b2a3d;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.stage.done {
+    background: #124332;
+    border-color: var(--green);
+    color: #a7f3d0;
+}
+.stage.current {
+    border: 2px solid var(--blue);
+    color: white;
+}
+.progress-bg {
+    height: 9px;
+    background: #26384d;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+.progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--green);
+    transition: width .3s;
+}
+.empty {
+    color: var(--muted);
+    text-align: center;
+    padding: 20px;
+}
+footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 22px;
+    border-top: 1px solid var(--border);
+}
+.small { font-size: 13px; color: var(--muted); }
+@media(max-width:700px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .workflow { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🚨 Incident Response Center</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="policies.html">Policies</a>
+        <a href="incident-response.html">Incident Response</a>
+    </nav>
+</header>
+
+<main>
+
+    <h2>Cybersecurity Incident Management Dashboard</h2>
+    <p class="intro">
+        A practical demonstration system for reporting, classifying,
+        tracking and responding to simulated cybersecurity incidents
+        in a small business.
+    </p>
+
+    <div class="alert">
+        <strong>DEMO MODE:</strong>
+        All incidents generated here are fictional training examples.
+        This dashboard does not monitor real devices or networks.
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <span>Total Incidents</span>
+            <strong id="totalCount">0</strong>
+        </div>
+        <div class="stat">
+            <span>Open Incidents</span>
+            <strong id="openCount">0</strong>
+        </div>
+        <div class="stat">
+            <span>High / Critical</span>
+            <strong id="highCount">0</strong>
+        </div>
+        <div class="stat">
+            <span>Resolved</span>
+            <strong id="resolvedCount">0</strong>
+        </div>
+    </div>
+
+    <section class="section">
+        <h2>⚡ Live Incident Simulation</h2>
+        <p class="muted">
+            Generate a fictional phishing alert to demonstrate
+            the incident response process.
+        </p>
+        <div class="actions">
+            <button onclick="simulateIncident()">
+                ⚠ Simulate Phishing Incident
+            </button>
+            <button class="secondary" onclick="resetDemo()">
+                Reset Demo Data
+            </button>
+        </div>
+        <p id="simulationMessage" class="small" aria-live="polite"></p>
+    </section>
+
+    <section class="section">
+        <h2>📝 Report a New Incident</h2>
+
+        <form id="incidentForm">
+            <div class="form-grid">
+                <div>
+                    <label for="incidentType">Incident Type</label>
+                    <select id="incidentType" required>
+                        <option value="Phishing Email">Phishing Email</option>
+                        <option value="Suspicious Login">Suspicious Login</option>
+                        <option value="Malware Alert">Malware Alert</option>
+                        <option value="Data Breach">Data Breach</option>
+                        <option value="Unauthorised Access">Unauthorised Access</option>
+                        <option value="Data Loss">Data Loss</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="impact">Business Impact</label>
+                    <select id="impact" required>
+                        <option value="Low">Low - No major disruption</option>
+                        <option value="Medium">Medium - Limited disruption</option>
+                        <option value="High">High - Major disruption</option>
+                    </select>
+                </div>
+            </div>
+
+            <label for="description">Incident Description</label>
+            <textarea id="description"
+                placeholder="Describe the suspicious activity..."
+                required></textarea>
+
+            <button type="submit">Submit Incident Report</button>
+        </form>
+        <p id="reportMessage" class="small" aria-live="polite"></p>
+    </section>
+
+    <section class="section">
+        <h2>📋 Incident History</h2>
+        <p class="muted">Select an incident to manage its response.</p>
+        <div id="incidentList">
+            <div class="empty">No incidents reported yet.</div>
+        </div>
+    </section>
+
+
+<section class="section">
+    <h2>🧠 Recommended Security Actions</h2>
+
+    <p class="muted">
+        Recommended actions based on the selected security incident.
+    </p>
+
+    <div id="recommendationBox">
+        <p class="empty">
+            Select an incident to view recommended security actions.
+        </p>
+    </div>
+</section>
+
+v<section class="section">
+        <h2>🛡 Incident Response Workflow</h2>
+        <p id="selectedIncidentText" class="muted">
+            Select or generate an incident to start the workflow.
+        </p>
+
+        <div class="workflow" id="workflow">
+            <div class="stage">1. Identification</div>
+            <div class="stage">2. Containment</div>
+            <div class="stage">3. Eradication</div>
+            <div class="stage">4. Recovery</div>
+            <div class="stage">5. Lessons Learned</div>
+        </div>
+
+        <div class="progress-bg">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <p id="workflowStatus" class="muted">
+            Waiting for an incident.
+        </p>
+
+        <button class="success" id="advanceButton"
+            onclick="advanceWorkflow()" disabled>
+            Complete Next Response Stage →
+        </button>
+    </section>
+
+    <section class="section">
+        <h2>📖 Incident Response Policy</h2>
+        <p class="muted">
+            The following procedure guides employees and administrators
+            during a security incident.
+        </p>
+        <ol>
+            <li><strong>Preparation:</strong> Train employees and maintain response procedures.</li>
+            <li><strong>Identification:</strong> Detect and document suspicious activity.</li>
+            <li><strong>Containment:</strong> Limit the incident's impact using approved procedures.</li>
+            <li><strong>Eradication:</strong> Remove the cause of the incident.</li>
+            <li><strong>Recovery:</strong> Restore affected services and verify their security.</li>
+            <li><strong>Lessons Learned:</strong> Document findings and improve security controls.</li>
+        </ol>
+    </section>
+
+</main>
+
+<footer>
+    © 2026 Cybersecurity Documentation Project | Incident Response Module
+</footer>
+
+<script>
+const stages = [
+    "Identification",
+    "Containment",
+    "Eradication",
+    "Recovery",
+    "Lessons Learned"
+];
+
+let incidents = [];
+let selectedId = null;
+
+try {
+    incidents = JSON.parse(localStorage.getItem("cyberDemoIncidents")) || [];
+    if (!Array.isArray(incidents)) incidents = [];
+} catch (error) {
+    incidents = [];
+}
+
+function saveData() {
+    try {
+        localStorage.setItem("cyberDemoIncidents", JSON.stringify(incidents));
+    } catch (error) {
+        console.warn("Browser storage is unavailable.");
+    }
+}
+
+function severityFor(type, impact) {
+    if (type === "Data Breach" || type === "Unauthorised Access") {
+        return impact === "High" ? "Critical" : "High";
+    }
+    if (impact === "High") return "High";
+    if (impact === "Medium") return "Medium";
+    return "Low";
+}
+
+function createIncident(type, description, impact) {
+    const incident = {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        type: type,
+        description: description,
+        impact: impact,
+        severity: severityFor(type, impact),
+        status: "Reported",
+        stage: 0,
+        date: new Date().toLocaleString()
+    };
+
+    incidents.unshift(incident);
+    selectedId = incident.id;
+    saveData();
+    render();
+    return incident;
+}
+
+function simulateIncident() {
+    const incident = createIncident(
+        "Phishing Email",
+        "Training simulation: An employee received an unexpected email asking them to review an unknown attachment. The message has been reported for investigation.",
+        "High"
+    );
+
+    document.getElementById("simulationMessage").textContent =
+        "Demo alert generated successfully. Incident ID: " + incident.id;
+}
+
+document.getElementById("incidentForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const type = document.getElementById("incidentType").value;
+    const impact = document.getElementById("impact").value;
+    const description = document.getElementById("description").value.trim();
+
+    if (!description) return;
+
+    const incident = createIncident(type, description, impact);
+
+    document.getElementById("reportMessage").textContent =
+        "Incident submitted successfully. Incident ID: " + incident.id;
+
+    document.getElementById("incidentForm").reset();
+});
+
+function selectIncident(id) {
+    selectedId = id;
+    render();
+}
+
+function advanceWorkflow() {
+    const incident = incidents.find(item => item.id === selectedId);
+    if (!incident || incident.status === "Resolved") return;
+
+    incident.stage++;
+
+    if (incident.stage >= stages.length) {
+        incident.stage = stages.length;
+        incident.status = "Resolved";
+    } else {
+        incident.status = stages[incident.stage - 1] + " Completed";
+    }
+
+    saveData();
+    render();
+}
+
+function render() {
+    const total = incidents.length;
+    const resolved = incidents.filter(i => i.status === "Resolved").length;
+    const open = total - resolved;
+    const high = incidents.filter(
+        i => i.severity === "High" || i.severity === "Critical"
+    ).length;
+
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("openCount").textContent = open;
+    document.getElementById("highCount").textContent = high;
+    document.getElementById("resolvedCount").textContent = resolved;
+
+    const list = document.getElementById("incidentList");
+
+    if (incidents.length === 0) {
+        list.innerHTML = '<div class="empty">No incidents reported yet. Click Simulate Phishing Incident to begin.</div>';
+    } else {
+        list.innerHTML = incidents.map(i => `
+            <div class="incident-card ${i.id === selectedId ? "active" : ""}">
+                <strong>${escapeHTML(i.type)}</strong>
+                <span class="tag ${i.severity.toLowerCase()}">${i.severity}</span>
+                <span class="tag">${escapeHTML(i.status)}</span>
+                <p>${escapeHTML(i.description)}</p>
+                <p class="small">ID: ${i.id} | ${escapeHTML(i.date)}</p>
+                <button class="secondary" onclick="selectIncident(${i.id})">
+                    Manage Incident
+                </button>
+            </div>
+        `).join("");
+    }
+
+    renderWorkflow();
+}
+
+
+function updateRecommendations(incident) {
+
+    const box = document.getElementById("recommendationBox");
+
+    if (!incident) {
+        box.innerHTML = `
+            <p class="empty">
+                Select an incident to view recommended security actions.
+            </p>
+        `;
+        return;
+    }
+
+    const recommendations = {
+        "Phishing Email": [
+            "Notify the IT administrator.",
+            "Warn the employee not to interact with the suspicious email.",
+            "Report and block the suspicious sender.",
+            "Check whether other employees received the same email.",
+            "Document the investigation."
+        ],
+
+        "Suspicious Login": [
+            "Notify the account owner.",
+            "Verify whether the login was authorized.",
+            "Review available login records.",
+            "Reset credentials if unauthorized access is confirmed.",
+            "Enable multi-factor authentication."
+        ],
+
+        "Malware Alert": [
+            "Notify the IT administrator.",
+            "Follow approved procedures to isolate the affected device.",
+            "Run an approved security scan.",
+            "Remove malware using trusted security tools.",
+            "Verify the device before restoring access."
+        ],
+
+        "Data Breach": [
+            "Notify the responsible security administrator.",
+            "Identify the potentially affected information.",
+            "Restrict unauthorized access.",
+            "Preserve relevant evidence and records.",
+            "Follow applicable data breach notification requirements."
+        ],
+
+        "Unauthorised Access": [
+            "Verify the reported unauthorized access.",
+            "Restrict the affected account or access.",
+            "Review account activity and access records.",
+            "Change compromised credentials.",
+            "Review access permissions."
+        ],
+
+        "Data Loss": [
+            "Identify the missing or affected data.",
+            "Notify the responsible administrator.",
+            "Check available backup copies.",
+            "Restore data from verified backups.",
+            "Review the cause of the data loss."
+        ]
+    };
+
+    const actions = recommendations[incident.type] || [
+        "Notify the administrator.",
+        "Investigate the reported incident.",
+        "Document the findings.",
+        "Follow the approved recovery procedure."
+    ];
+
+    box.innerHTML = `
+        <div class="incident-card">
+            <strong>${escapeHTML(incident.type)}</strong>
+            <p>Recommended actions:</p>
+            <ol>
+                ${actions.map(action =>
+                    `<li>${escapeHTML(action)}</li>`
+                ).join("")}
+            </ol>
+        </div>
+    `;
+}
+function renderWorkflow() {
+    const incident = incidents.find(i => i.id === selectedId);
+    updateRecommendations(incident);
+    const workflow = document.getElementById("workflow");
+    const button = document.getElementById("advanceButton");
+
+    if (!incident) {
+        workflow.innerHTML = stages.map((stage, index) =>
+            `<div class="stage">${index + 1}. ${stage}</div>`
+        ).join("");
+
+        document.getElementById("selectedIncidentText").textContent =
+            "Select or generate an incident to start the workflow.";
+        document.getElementById("workflowStatus").textContent =
+            "Waiting for an incident.";
+        document.getElementById("progressFill").style.width = "0%";
+        button.disabled = true;
+        return;
+    }
+
+    workflow.innerHTML = stages.map((stage, index) => {
+        let className = "stage";
+        if (index < incident.stage) className += " done";
+        else if (index === incident.stage && incident.stage < stages.length)
+            className += " current";
+
+        return `<div class="${className}">
+            ${index < incident.stage ? "✓" : index + 1}. ${stage}
+        </div>`;
+    }).join("");
+
+    const percent = (incident.stage / stages.length) * 100;
+    document.getElementById("progressFill").style.width = percent + "%";
+
+    document.getElementById("selectedIncidentText").textContent =
+        "Managing: " + incident.type + " | Severity: " + incident.severity;
+
+    document.getElementById("workflowStatus").textContent =
+        incident.status === "Resolved"
+        ? "Incident resolved. All response stages completed."
+        : "Current stage: " + stages[incident.stage];
+
+    button.disabled = incident.status === "Resolved";
+
+    button.textContent = incident.status === "Resolved"
+        ? "✓ Incident Resolved"
+        : "Complete Next Response Stage →";
+}
+
+function resetDemo() {
+    if (!confirm("Delete all demonstration incidents from this browser?")) return;
+
+    incidents = [];
+    selectedId = null;
+    saveData();
+
+    document.getElementById("simulationMessage").textContent =
+        "Demo data has been reset.";
+    document.getElementById("reportMessage").textContent = "";
+
+    render();
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[char]);
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Command Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1120;color:#e5e7eb}
+.dashboard{max-width:1400px;margin:auto;padding:30px}
+.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:30px}
+.topbar h1{margin:0;color:#fff}
+.topbar p{color:#94a3b8;margin-top:8px}
+.nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+.nav a{color:#cbd5e1;text-decoration:none;background:#172235;padding:11px 17px;border-radius:9px;border:1px solid #26364f}
+.nav a:hover,.nav a.active{background:#2563eb;color:#fff}
+.hero{background:linear-gradient(120deg,#172554,#0f172a);padding:30px;border-radius:18px;border:1px solid #263b68;margin-bottom:25px}
+.hero h2{font-size:28px;margin-top:0}
+.hero p{color:#cbd5e1;line-height:1.7}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:25px}
+.card{background:#131e30;border:1px solid #26364f;padding:22px;border-radius:15px}
+.card h3{font-size:14px;color:#94a3b8;margin:0 0 12px}
+.card .number{font-size:32px;font-weight:bold;color:#fff}
+.card p{color:#94a3b8;font-size:13px}
+.section{background:#131e30;border:1px solid #26364f;padding:24px;border-radius:15px;margin-bottom:24px}
+.section h2{margin-top:0}
+.modules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.module{padding:20px;border:1px solid #293b55;background:#101a2a;border-radius:12px}
+.module h3{margin-top:0;color:#fff}
+.module p{font-size:14px;line-height:1.6;color:#94a3b8}
+.module a{display:inline-block;margin-top:10px;text-decoration:none;color:#60a5fa;font-weight:bold}
+.activity{padding:13px 0;border-bottom:1px solid #273449;color:#cbd5e1}
+.footer{text-align:center;padding:25px;color:#64748b}
+@media(max-width:600px){.dashboard{padding:15px}.hero{padding:22px}.hero h2{font-size:23px}}
+</style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<header class="topbar">
+<div>
+<h1>🛡️ Security Command Center</h1>
+<p>Cybersecurity Management Dashboard</p>
+</div>
+</header>
+
+<nav class="nav">
+<a href="index.html" class="active">Home</a>
+<a href="policies.html">Policies</a>
+<a href="incident.html">Incident Response</a>
+<a href="recovery.html">Recovery</a>
+<a href="awareness.html">Awareness</a>
+<a href="risk.html">Risk Assessment</a>
+<a href="analytics.html">Analytics</a>
+<a href="settings.html">Settings</a>
+<a href="audit.html">Audit Log</a>
+</nav>
+
+<section class="hero">
+<h2>Security Overview</h2>
+<p>Welcome to your centralized cybersecurity management platform. Monitor security activities, manage incidents, assess risks, maintain policies, and improve organizational security awareness from one place.</p>
+</section>
+
+<section class="cards">
+<div class="card">
+<h3>Security Score</h3>
+<div class="number">82/100</div>
+<p>Overall security posture</p>
+</div>
+
+<div class="card">
+<h3>Incident Response</h3>
+<div class="number">Active</div>
+<p>Monitor and manage incidents</p>
+</div>
+
+<div class="card">
+<h3>Risk Management</h3>
+<div class="number">Tracking</div>
+<p>Identify and assess security risks</p>
+</div>
+
+<div class="card">
+<h3>Policy Status</h3>
+<div class="number">Managed</div>
+<p>Maintain security policies</p>
+</div>
+</section>
+
+<section class="section">
+<h2>🧩 Security Modules</h2>
+<div class="modules">
+
+<div class="module">
+<h3>📋 Policy Management</h3>
+<p>Create, review, and manage security policies and compliance checklists.</p>
+<a href="policies.html">Open Policies →</a>
+</div>
+
+<div class="module">
+<h3>🚨 Incident Response</h3>
+<p>Track security incidents, investigate threats, and manage incident resolution.</p>
+<a href="incident.html">Open Incident Center →</a>
+</div>
+
+<div class="module">
+<h3>♻️ Recovery Center</h3>
+<p>Manage disaster recovery plans, testing, and recovery readiness.</p>
+<a href="recovery.html">Open Recovery →</a>
+</div>
+
+<div class="module">
+<h3>🎓 Security Awareness</h3>
+<p>Learn cybersecurity essentials through training modules and quizzes.</p>
+<a href="awareness.html">Start Training →</a>
+</div>
+
+<div class="module">
+<h3>⚠️ Risk Assessment</h3>
+<p>Identify, evaluate, and manage cybersecurity risks.</p>
+<a href="risk.html">Open Risk Assessment →</a>
+</div>
+
+<div class="module">
+<h3>📊 Security Analytics</h3>
+<p>Visualize incidents, trends, severity distribution, and security insights.</p>
+<a href="analytics.html">Open Analytics →</a>
+</div>
+
+</div>
+</section>
+
+<section class="section">
+<h2>⚡ Quick Access</h2>
+<div class="modules">
+
+<div class="module">
+<h3>Report an Incident</h3>
+<p>Quickly report a suspicious event or potential security breach.</p>
+<a href="incident.html">Report Now →</a>
+</div>
+
+<div class="module">
+<h3>Review Policies</h3>
+<p>Check organizational security rules and compliance requirements.</p>
+<a href="policies.html">Review Now →</a>
+</div>
+
+<div class="module">
+<h3>View Analytics</h3>
+<p>Explore the security dashboard and incident statistics.</p>
+<a href="analytics.html">View Reports →</a>
+</div>
+
+</div>
+</section>
+
+<footer class="footer">
+Security Command Center · Cybersecurity Management Platform
+</footer>
+
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/auth.js"></script>
+<!-- USER SESSION BAR -->
+<div id="userSessionBar" style="
+position:fixed;
+top:15px;
+right:20px;
+z-index:9999;
+display:flex;
+align-items:center;
+gap:12px;
+background:#101c2e;
+border:1px solid #263c58;
+padding:10px 16px;
+border-radius:12px;
+color:white;
+font-family:Arial,sans-serif;
+box-shadow:0 5px 20px rgba(0,0,0,.25);
+">
+
+    <span id="loggedUser" style="font-size:13px;">
+        👤 Administrator
+    </span>
+
+    <button onclick="CyberAuth.logout()" style="
+    background:#dc2626;
+    color:white;
+    border:none;
+    padding:8px 13px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+    ">
+        Logout
+    </button>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.CyberAuth && CyberAuth.getUser()) {
+        document.getElementById("loggedUser").textContent =
+            "👤 " + CyberAuth.getUser();
+    }
+});
+</script>
+<!-- LIVE SECURITY MONITOR -->
+<div id="liveSecurityMonitor">
+
+    <div class="lsm-header">
+        <span class="lsm-dot"></span>
+        LIVE SECURITY MONITOR
+        <span class="lsm-live">LIVE</span>
+    </div>
+
+    <div class="lsm-clock" id="lsmClock">--:--:--</div>
+    <div class="lsm-date" id="lsmDate">Loading date...</div>
+
+    <div class="lsm-divider"></div>
+
+    <div class="lsm-row">
+        <span>System Status</span>
+        <strong class="lsm-green">OPERATIONAL</strong>
+    </div>
+
+    <div class="lsm-row">
+        <span>Authentication</span>
+        <strong id="lsmAuth" class="lsm-green">ACTIVE</strong>
+    </div>
+
+    <div class="lsm-row">
+        <span>Security Events</span>
+        <strong id="lsmEvents">0</strong>
+    </div>
+
+    <div class="lsm-row">
+        <span>Monitor</span>
+        <strong class="lsm-green">RUNNING</strong>
+    </div>
+
+    <div class="lsm-footer">
+        Monitoring interface · Demo environment
+    </div>
+
+</div>
+
+<style>
+#liveSecurityMonitor {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 280px;
+    z-index: 9998;
+    background: #0b1525;
+    color: #e5edf9;
+    border: 1px solid #1e3a56;
+    border-radius: 15px;
+    padding: 18px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 10px 40px rgba(0,0,0,.4);
+}
+
+#liveSecurityMonitor .lsm-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#liveSecurityMonitor .lsm-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22c55e;
+    animation: lsmPulse 1.5s infinite;
+}
+
+#liveSecurityMonitor .lsm-live {
+    margin-left: auto;
+    color: #4ade80;
+    font-size: 10px;
+}
+
+#liveSecurityMonitor .lsm-clock {
+    margin-top: 18px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #38bdf8;
+    letter-spacing: 2px;
+}
+
+#liveSecurityMonitor .lsm-date {
+    margin-top: 5px;
+    color: #91a6c2;
+    font-size: 12px;
+}
+
+#liveSecurityMonitor .lsm-divider {
+    height: 1px;
+    background: #20344c;
+    margin: 15px 0;
+}
+
+#liveSecurityMonitor .lsm-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+    font-size: 12px;
+}
+
+#liveSecurityMonitor .lsm-row span {
+    color: #94a3b8;
+}
+
+#liveSecurityMonitor .lsm-green {
+    color: #4ade80;
+}
+
+#liveSecurityMonitor .lsm-footer {
+    border-top: 1px solid #20344c;
+    margin-top: 14px;
+    padding-top: 12px;
+    text-align: center;
+    color: #71849d;
+    font-size: 10px;
+}
+
+@keyframes lsmPulse {
+    50% {
+        opacity: .35;
+    }
+}
+
+@media (max-width: 600px) {
+    #liveSecurityMonitor {
+        width: 245px;
+        right: 10px;
+        bottom: 10px;
+        padding: 14px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const clock = document.getElementById("lsmClock");
+    const date = document.getElementById("lsmDate");
+    const auth = document.getElementById("lsmAuth");
+    const events = document.getElementById("lsmEvents");
+
+    function updateClock() {
+        const now = new Date();
+
+        clock.textContent = now.toLocaleTimeString();
+
+        date.textContent = now.toLocaleDateString(undefined, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+    }
+
+    function updateMonitor() {
+        updateClock();
+
+        const session =
+            sessionStorage.getItem("cyber_demo_session") ||
+            localStorage.getItem("cyber_demo_session");
+
+        auth.textContent = session ? "ACTIVE" : "DEMO";
+
+        let auditLogs = [];
+
+        try {
+            auditLogs = JSON.parse(
+                localStorage.getItem("cyber_audit_log_v1") || "[]"
+            );
+        } catch (e) {
+            auditLogs = [];
+        }
+
+        events.textContent = Array.isArray(auditLogs)
+            ? auditLogs.length
+            : 0;
+    }
+
+    updateMonitor();
+    setInterval(updateMonitor, 1000);
+})();
+</script>
+
+<!-- SECURITY ALERT CENTER -->
+<div id="securityAlertCenter">
+    <div class="sac-header">
+        <div>
+            <span class="sac-indicator"></span>
+            <strong>SECURITY ALERT CENTER</strong>
+        </div>
+        <button onclick="toggleAlertCenter()" id="sacToggle">−</button>
+    </div>
+
+    <div id="sacContent">
+        <div class="sac-summary">
+            <div class="sac-summary-box">
+                <span id="sacTotal">0</span>
+                <small>TOTAL ALERTS</small>
+            </div>
+            <div class="sac-summary-box">
+                <span id="sacCritical">0</span>
+                <small>CRITICAL</small>
+            </div>
+        </div>
+
+        <div class="sac-actions">
+            <button onclick="generateDemoAlert('Critical')">+ Critical</button>
+            <button onclick="generateDemoAlert('High')">+ High</button>
+            <button onclick="generateDemoAlert('Medium')">+ Medium</button>
+        </div>
+
+        <div id="sacAlertList"></div>
+
+        <button class="sac-clear" onclick="clearSecurityAlerts()">
+            Clear All Alerts
+        </button>
+    </div>
+</div>
+
+<style>
+#securityAlertCenter {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    width: 330px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: #0b1525;
+    color: #e5edf9;
+    border: 1px solid #263d58;
+    border-radius: 15px;
+    padding: 16px;
+    z-index: 9997;
+    box-shadow: 0 10px 35px rgba(0,0,0,.4);
+    font-family: Arial, sans-serif;
+}
+
+.sac-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.sac-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 8px #ef4444;
+}
+
+.sac-header button {
+    background: #1e293b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 26px;
+    cursor: pointer;
+}
+
+.sac-summary {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.sac-summary-box {
+    flex: 1;
+    background: #142237;
+    border: 1px solid #263d58;
+    border-radius: 9px;
+    padding: 12px;
+    text-align: center;
+}
+
+.sac-summary-box span {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.sac-summary-box small {
+    font-size: 9px;
+    color: #94a3b8;
+}
+
+.sac-actions {
+    display: flex;
+    gap: 6px;
+    margin: 15px 0;
+}
+
+.sac-actions button {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 10px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #334155;
+}
+
+.sac-actions button:first-child {
+    background: #b91c1c;
+}
+
+.sac-actions button:nth-child(2) {
+    background: #c2410c;
+}
+
+.sac-actions button:nth-child(3) {
+    background: #a16207;
+}
+
+.sac-alert {
+    background: #111e30;
+    border: 1px solid #263d58;
+    border-left: 4px solid #64748b;
+    border-radius: 8px;
+    padding: 11px;
+    margin: 9px 0;
+}
+
+.sac-alert.Critical {
+    border-left-color: #ef4444;
+}
+
+.sac-alert.High {
+    border-left-color: #f97316;
+}
+
+.sac-alert.Medium {
+    border-left-color: #eab308;
+}
+
+.sac-alert.Low {
+    border-left-color: #22c55e;
+}
+
+.sac-alert-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sac-severity {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.sac-alert.Critical .sac-severity {
+    color: #f87171;
+}
+
+.sac-alert.High .sac-severity {
+    color: #fb923c;
+}
+
+.sac-alert.Medium .sac-severity {
+    color: #facc15;
+}
+
+.sac-alert.Low .sac-severity {
+    color: #4ade80;
+}
+
+.sac-alert p {
+    font-size: 11px;
+    line-height: 1.5;
+    color: #cbd5e1;
+    margin: 8px 0;
+}
+
+.sac-time {
+    font-size: 9px;
+    color: #64748b;
+}
+
+.sac-dismiss {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.sac-dismiss:hover {
+    color: white;
+}
+
+.sac-clear {
+    width: 100%;
+    background: #1e293b;
+    color: #cbd5e1;
+    border: 1px solid #334155;
+    padding: 9px;
+    border-radius: 7px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.sac-clear:hover {
+    background: #334155;
+}
+
+.sac-empty {
+    text-align: center;
+    color: #64748b;
+    padding: 20px 5px;
+    font-size: 12px;
+}
+
+@media(max-width:600px) {
+    #securityAlertCenter {
+        width: 280px;
+        left: 10px;
+        bottom: 10px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const STORAGE_KEY = "cyber_demo_alerts_v1";
+
+    function getAlerts() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        } catch {
+            return [];
+        }
+    }
+
+    function saveAlerts(alerts) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
+    }
+
+    function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[char];
+        });
+    }
+
+    function renderAlerts() {
+        const alerts = getAlerts();
+        const list = document.getElementById("sacAlertList");
+
+        document.getElementById("sacTotal").textContent = alerts.length;
+
+        document.getElementById("sacCritical").textContent =
+            alerts.filter(a => a.severity === "Critical").length;
+
+        if (alerts.length === 0) {
+            list.innerHTML = '<div class="sac-empty">No active alerts.<br>System monitoring is running.</div>';
+            return;
+        }
+
+        list.innerHTML = alerts.map(alert => `
+            <div class="sac-alert ${escapeHTML(alert.severity)}">
+                <div class="sac-alert-top">
+                    <span class="sac-severity">
+                        ${escapeHTML(alert.severity.toUpperCase())} ALERT
+                    </span>
+                    <button class="sac-dismiss"
+                        onclick="dismissSecurityAlert('${alert.id}')"
+                        title="Dismiss alert">×</button>
+                </div>
+
+                <p>${escapeHTML(alert.message)}</p>
+
+                <div class="sac-time">${escapeHTML(alert.time)}</div>
+            </div>
+        `).join("");
+    }
+
+    window.generateDemoAlert = function (severity) {
+        const messages = {
+            Critical: [
+                "Critical security event detected. Immediate investigation required.",
+                "Potential unauthorized access detected.",
+                "High-risk system activity requires immediate review."
+            ],
+            High: [
+                "Multiple failed login attempts detected.",
+                "Suspicious account activity identified.",
+                "Unusual access pattern detected."
+            ],
+            Medium: [
+                "Security policy review recommended.",
+                "Unusual network activity flagged for review.",
+                "User account security check recommended."
+            ],
+            Low: [
+                "Routine security update available.",
+                "Security awareness reminder generated.",
+                "System maintenance review recommended."
+            }
+        };
+
+        const options = messages[severity] || messages.Medium;
+        const message = options[Math.floor(Math.random() * options.length)];
+
+        const alerts = getAlerts();
+
+        alerts.unshift({
+            id: Date.now().toString(),
+            severity: severity,
+            message: message,
+            time: new Date().toLocaleString()
+        });
+
+        saveAlerts(alerts.slice(0, 20));
+        renderAlerts();
+    };
+
+    window.dismissSecurityAlert = function (id) {
+        saveAlerts(getAlerts().filter(alert => alert.id !== id));
+        renderAlerts();
+    };
+
+    window.clearSecurityAlerts = function () {
+        if (confirm("Are you sure you want to clear all security alerts?")) {
+            saveAlerts([]);
+            renderAlerts();
+        }
+    };
+
+    window.toggleAlertCenter = function () {
+        const content = document.getElementById("sacContent");
+        const button = document.getElementById("sacToggle");
+
+        if (content.style.display === "none") {
+            content.style.display = "block";
+            button.textContent = "−";
+        } else {
+            content.style.display = "none";
+            button.textContent = "+";
+        }
+    };
+
+    renderAlerts();
+})();
+</script>
+
+</body>
+</html>

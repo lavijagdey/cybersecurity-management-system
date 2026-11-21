@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disaster Recovery Procedures</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #0d1117; color: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 3rem 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+    h1 { color: #00bcff; margin-bottom: 1rem; font-size: 2.2rem; }
+    p.intro { color: #8b949e; margin-bottom: 2rem; font-size: 1.1rem; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .card h2 { color: #58a6ff; font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .metrics { display: flex; gap: 1rem; margin-top: 1rem; }
+    .metric-box { background: #0d1117; border: 1px solid #30363d; padding: 1rem; border-radius: 8px; flex: 1; text-align: center; }
+    .metric-box span { display: block; font-size: 1.4rem; font-weight: bold; color: #00bcff; }
+    .btn-back { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #00bcff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>💾 Disaster Recovery & Business Continuity</h1>
+  <p class="intro">Operational frameworks ensuring rapid system restoration following physical or digital catastrophes.</p>
+
+  <div class="card">
+    <h2>Critical Recovery Targets</h2>
+    <div class="metrics">
+      <div class="metric-box">
+        <span>4 Hours</span>
+        <p>Recovery Time Objective (RTO)</p>
+      </div>
+      <div class="metric-box">
+        <span>1 Hour</span>
+        <p>Recovery Point Objective (RPO)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Failover Procedures</h2>
+    <p>Automated DNS rerouting shifts production traffic to a secondary cloud region if the primary infrastructure goes unreachable for more than 5 minutes.</p>
+  </div>
+
+  <a href="index.html" class="btn-back">← Back to Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incident Response Center</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+/* INCIDENT DASHBOARD - LOCAL STYLES */
+#ir-dashboard {
+  --ir-bg:#0b1220;
+  --ir-panel:#131e30;
+  --ir-border:#263650;
+  --ir-text:#e8eef8;
+  --ir-muted:#91a4bd;
+  --ir-blue:#3b82f6;
+  color:var(--ir-text);
+  padding:24px 0 40px;
+}
+#ir-dashboard * { box-sizing:border-box; }
+#ir-dashboard .ir-container { max-width:1200px; margin:auto; padding:0 20px; }
+#ir-dashboard .ir-heading { margin-bottom:22px; }
+#ir-dashboard .ir-heading h2 { margin:0 0 8px; font-size:30px; }
+#ir-dashboard .ir-heading p { color:var(--ir-muted); margin:0; }
+#ir-dashboard .ir-demo {
+  background:#332b18; border:1px solid #66502a; color:#f4d38a;
+  padding:12px 15px; border-radius:10px; margin:18px 0;
+}
+#ir-dashboard .ir-stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px;
+}
+#ir-dashboard .ir-stat {
+  background:var(--ir-panel); border:1px solid var(--ir-border);
+  padding:18px; border-radius:14px;
+}
+#ir-dashboard .ir-stat small { color:var(--ir-muted); display:block; margin-bottom:9px; }
+#ir-dashboard .ir-stat strong { font-size:28px; }
+#ir-dashboard .ir-stat .ir-stat-icon { float:right; font-size:22px; }
+#ir-dashboard .ir-section {
+  margin-top:24px; background:var(--ir-panel);
+  border:1px solid var(--ir-border); border-radius:14px; padding:20px;
+}
+#ir-dashboard .ir-section h3 { margin:0 0 16px; font-size:20px; }
+#ir-dashboard .ir-actions { display:flex; flex-wrap:wrap; gap:10px; }
+#ir-dashboard button,#ir-dashboard .ir-button {
+  border:0; border-radius:8px; padding:11px 16px;
+  cursor:pointer; font-weight:600; text-decoration:none;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+#ir-dashboard .ir-primary { background:var(--ir-blue); color:white; }
+#ir-dashboard .ir-secondary { background:#243550; color:#e7efff; border:1px solid #3b506d; }
+#ir-dashboard .ir-danger { background:#7f1d1d; color:#fff; }
+#ir-dashboard button:hover { filter:brightness(1.12); }
+#ir-dashboard .ir-muted { color:var(--ir-muted); }
+#ir-dashboard .ir-table-wrap { overflow-x:auto; }
+#ir-dashboard table { width:100%; border-collapse:collapse; min-width:720px; }
+#ir-dashboard th,#ir-dashboard td {
+  text-align:left; padding:13px 10px; border-bottom:1px solid var(--ir-border);
+}
+#ir-dashboard th { color:var(--ir-muted); font-size:12px; text-transform:uppercase; }
+#ir-dashboard td { font-size:14px; }
+#ir-dashboard .ir-badge {
+  display:inline-block; border-radius:999px; padding:5px 9px;
+  font-size:12px; font-weight:700;
+}
+#ir-dashboard .ir-critical { background:#581c24; color:#fda4af; }
+#ir-dashboard .ir-high { background:#5b2a17; color:#fdba74; }
+#ir-dashboard .ir-medium { background:#59471b; color:#fde68a; }
+#ir-dashboard .ir-low { background:#164b37; color:#86efac; }
+#ir-dashboard .ir-status {
+  background:#20314a; color:#dbeafe; border-radius:7px;
+  padding:7px; border:1px solid #3b506d; max-width:150px;
+}
+#ir-dashboard .ir-form-grid {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+}
+#ir-dashboard .ir-field { display:flex; flex-direction:column; gap:7px; }
+#ir-dashboard .ir-field label { color:var(--ir-muted); font-size:13px; }
+#ir-dashboard .ir-field input,#ir-dashboard .ir-field select,
+#ir-dashboard .ir-field textarea {
+  width:100%; padding:11px; border-radius:8px;
+  background:#0b1627; color:var(--ir-text);
+  border:1px solid var(--ir-border); font:inherit;
+}
+#ir-dashboard .ir-field textarea { min-height:100px; resize:vertical; }
+#ir-dashboard .ir-full { grid-column:1/-1; }
+#ir-dashboard .ir-empty { text-align:center; padding:28px; color:var(--ir-muted); }
+#ir-dashboard .ir-detail {
+  display:none; background:#0b1627; border:1px solid var(--ir-border);
+  border-radius:10px; padding:16px; margin-top:15px;
+}
+#ir-dashboard .ir-detail.show { display:block; }
+#ir-dashboard .ir-detail p { margin:8px 0; }
+#ir-dashboard .ir-toast {
+  position:fixed; bottom:20px; right:20px; z-index:9999;
+  background:#166534; color:white; padding:14px 18px;
+  border-radius:10px; box-shadow:0 6px 20px #0005;
+  display:none;
+}
+@media(max-width:800px) {
+  #ir-dashboard .ir-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:520px) {
+  #ir-dashboard .ir-stats { grid-template-columns:1fr 1fr; gap:9px; }
+  #ir-dashboard .ir-stat { padding:13px; }
+  #ir-dashboard .ir-stat strong { font-size:23px; }
+  #ir-dashboard .ir-form-grid { grid-template-columns:1fr; }
+  #ir-dashboard .ir-full { grid-column:auto; }
+  #ir-dashboard .ir-section { padding:15px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>🛡 Cybersecurity Policy & Incident Response</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="policies.html">Policies</a>
+    <a href="incident.html">Incident Response</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="awareness.html">Awareness</a>
+    <a href="risk.html">Risk Assessment</a>
+  </nav>
+</header>
+
+<main id="ir-dashboard">
+<div class="ir-container">
+
+  <div class="ir-heading">
+    <h2>🚨 Incident Response Center</h2>
+    <p>Cybersecurity Incident Management Dashboard</p>
+  </div>
+
+  <div class="ir-demo">
+    ⚠️ <strong>Demo Mode:</strong> This dashboard uses locally saved demo data.
+    It is not connected to a real security monitoring system.
+  </div>
+
+  <div class="ir-stats">
+    <div class="ir-stat">
+      <span class="ir-stat-icon">📊</span>
+      <small>Total Incidents</small>
+      <strong id="ir-total">0</strong>
+    </div>
+    <div class="ir-stat">
+      <span class="ir-stat-icon">🟠</span>
+      <small>Open Incidents</small>
+      <strong id="ir-open">0</strong>
+    </div>
+    <div class="ir-stat">
+      <span class="ir-stat-icon">🔴</span>
+      <small>High / Critical</small>
+      <strong id="ir-high">0</strong>
+    </div>
+    <div class="ir-stat">
+      <span class="ir-stat-icon">✅</span>
+      <small>Resolved</small>
+      <strong id="ir-resolved">0</strong>
+    </div>
+  </div>
+
+  <!-- SIMULATION -->
+  <section class="ir-section">
+    <h3>⚡ Live Incident Simulation</h3>
+    <p class="ir-muted">
+      Create a fictional phishing incident to demonstrate how an incident response
+      team would manage a security event.
+    </p>
+    <div class="ir-actions">
+      <button type="button" class="ir-primary" id="ir-simulate">
+        🚨 Simulate Phishing Incident
+      </button>
+      <button type="button" class="ir-secondary" id="ir-clear-demo">
+        Reset Demo Data
+      </button>
+    </div>
+  </section>
+
+  <!-- INCIDENT LIST -->
+  <section class="ir-section">
+    <h3>📋 Incident Management</h3>
+    <div class="ir-field" style="max-width:260px;margin-bottom:15px;">
+      <label for="ir-filter">Filter by status</label>
+      <select id="ir-filter">
+        <option value="All">All incidents</option>
+        <option value="Open">Open</option>
+        <option value="Investigating">Investigating</option>
+        <option value="Contained">Contained</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+    </div>
+
+    <div class="ir-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Incident ID</th>
+            <th>Incident</th>
+            <th>Severity</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Manage</th>
+          </tr>
+        </thead>
+        <tbody id="ir-table-body"></tbody>
+      </table>
+    </div>
+    <div id="ir-empty" class="ir-empty" style="display:none;">
+      No incidents found. Create a simulation or report an incident.
+    </div>
+    <div id="ir-detail" class="ir-detail"></div>
+  </section>
+
+  <!-- ACTIVITY LOG -->
+<section class="ir-section">
+  <h3>📜 Incident Activity Log</h3>
+  <p class="ir-muted">Recent actions performed in the incident dashboard.</p>
+
+  <div class="ir-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Activity</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody id="ir-activity-body"></tbody>
+    </table>
+  </div>
+  <div id="ir-activity-empty" class="ir-empty" style="display:none;">
+    No activity recorded yet.
+  </div>
+</section>
+
+<!-- REPORT FORM -->
+  <section class="ir-section">
+    <h3>📝 Report a Security Incident</h3>
+    <p class="ir-muted">Enter details below to create a new incident report.</p>
+
+    <form id="ir-form">
+      <div class="ir-form-grid">
+        <div class="ir-field">
+          <label for="ir-title">Incident title *</label>
+          <input id="ir-title" required maxlength="100"
+                 placeholder="e.g. Suspicious login attempt">
+        </div>
+
+        <div class="ir-field">
+          <label for="ir-type">Incident type *</label>
+          <select id="ir-type" required>
+            <option value="">Select type</option>
+            <option>Phishing</option>
+            <option>Malware</option>
+            <option>Unauthorized Access</option>
+            <option>Data Breach</option>
+            <option>Suspicious Activity</option>
+            <option>Denial of Service</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="ir-field">
+          <label for="ir-severity">Severity *</label>
+          <select id="ir-severity" required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+
+        <div class="ir-field">
+          <label for="ir-reporter">Reporter</label>
+          <input id="ir-reporter" placeholder="Name or team">
+        </div>
+
+        <div class="ir-field ir-full">
+          <label for="ir-description">Incident description *</label>
+          <textarea id="ir-description" required
+            placeholder="Describe what happened, when it happened, and what was observed."></textarea>
+        </div>
+
+        <div class="ir-field ir-full">
+          <button class="ir-primary" type="submit">Submit Incident Report</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <p>© 2026 Cybersecurity Policy & Incident Response Project</p>
+</footer>
+
+<div class="ir-toast" id="ir-toast"></div>
+
+<script>
+(function () {
+  const STORAGE_KEY = "cyber_incident_dashboard_v2";
+const ACTIVITY_KEY = "cyber_incident_activity_v1";
+let activities = [];
+
+function loadActivities() {
+  try {
+    activities = JSON.parse(localStorage.getItem(ACTIVITY_KEY)) || [];
+    if (!Array.isArray(activities)) activities = [];
+  } catch (e) {
+    activities = [];
+  }
+}
+
+function logActivity(action, details) {
+  activities.unshift({
+    time: new Date().toLocaleString(),
+    action: action,
+    details: details
+  });
+
+  // Keep the most recent 100 activity entries
+  activities = activities.slice(0, 100);
+
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activities));
+  renderActivity();
+}
+
+function renderActivity() {
+  const body = document.getElementById("ir-activity-body");
+  const empty = document.getElementById("ir-activity-empty");
+
+  if (!body || !empty) return;
+
+  body.innerHTML = "";
+
+  empty.style.display = activities.length ? "none" : "block";
+
+  activities.forEach(activity => {
+    const row = document.createElement("tr");
+
+    const timeCell = document.createElement("td");
+    timeCell.textContent = activity.time;
+
+    const actionCell = document.createElement("td");
+    actionCell.textContent = activity.action;
+
+    const detailsCell = document.createElement("td");
+    detailsCell.textContent = activity.details;
+
+    row.append(timeCell, actionCell, detailsCell);
+    body.appendChild(row);
+  });
+}
+  const $ = id => document.getElementById(id);
+
+  let incidents = [];
+
+  function loadData() {
+    try {
+      incidents = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      if (!Array.isArray(incidents)) incidents = [];
+    } catch (e) {
+      incidents = [];
+    }
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(incidents));
+  }
+
+  function toast(message) {
+    const el = $("ir-toast");
+    el.textContent = message;
+    el.style.display = "block";
+    clearTimeout(window.irToastTimer);
+    window.irToastTimer = setTimeout(() => el.style.display = "none", 3000);
+  }
+
+  function makeId() {
+    return "INC-" + Date.now().toString().slice(-8);
+  }
+
+  function addIncident(data) {
+    incidents.unshift({
+      id: makeId(),
+      title: data.title,
+      type: data.type,
+      severity: data.severity,
+      reporter: data.reporter || "Demo System",
+      description: data.description,
+      status: "Open",
+      created: new Date().toISOString()
+    });
+    saveData();
+    render();
+  }
+
+  function severityClass(severity) {
+    return "ir-" + String(severity).toLowerCase();
+  }
+
+  function render() {
+    const filter = $("ir-filter").value;
+    const visible = incidents.filter(i => filter === "All" || i.status === filter);
+
+    $("ir-total").textContent = incidents.length;
+    $("ir-open").textContent = incidents.filter(i =>
+      i.status !== "Resolved").length;
+    $("ir-high").textContent = incidents.filter(i =>
+      i.severity === "High" || i.severity === "Critical").length;
+    $("ir-resolved").textContent = incidents.filter(i =>
+      i.status === "Resolved").length;
+
+    const body = $("ir-table-body");
+    body.innerHTML = "";
+
+    $("ir-empty").style.display = visible.length ? "none" : "block";
+
+    visible.forEach(incident => {
+      const tr = document.createElement("tr");
+
+      const date = new Date(incident.created).toLocaleString();
+
+      tr.innerHTML = `
+        <td>${incident.id}</td>
+        <td>
+          <strong>${escapeHTML(incident.title)}</strong><br>
+          <span class="ir-muted">${escapeHTML(incident.type)}</span>
+        </td>
+        <td><span class="ir-badge ${severityClass(incident.severity)}">
+          ${escapeHTML(incident.severity)}</span></td>
+        <td>${date}</td>
+        <td>
+          <select class="ir-status" data-status="${incident.id}">
+            ${["Open","Investigating","Contained","Resolved"].map(s =>
+              `<option ${incident.status === s ? "selected" : ""}>${s}</option>`
+            ).join("")}
+          </select>
+        </td>
+        <td>
+          <button type="button" class="ir-secondary" data-view="${incident.id}">
+            Manage
+          </button>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+
+    body.querySelectorAll("[data-status]").forEach(select => {
+      select.addEventListener("change", function () {
+        const incident = incidents.find(i => i.id === this.dataset.status);
+        if (!incident) return;
+        incident.status = this.value;
+        logActivity(
+  "Status Updated",
+  incident.title + " → " + incident.status
+);
+        
+      render();
+      logActivity("Incident Created", data.title + " (" + data.severity + ")");
+        toast("Incident status updated.");
+      });
+    });
+
+    body.querySelectorAll("[data-view]").forEach(button => {
+      button.addEventListener("click", function () {
+        showDetails(this.dataset.view);
+      });
+    });
+  }
+
+  function escapeHTML(value) {
+    return String(value || "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",
+      '"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  function showDetails(id) {
+    const incident = incidents.find(i => i.id === id);
+    if (!incident) return;
+
+    const panel = $("ir-detail");
+    panel.classList.add("show");
+    panel.innerHTML = `
+      <h3>Incident Details — ${incident.id}</h3>
+      <p><strong>Title:</strong> ${escapeHTML(incident.title)}</p>
+      <p><strong>Type:</strong> ${escapeHTML(incident.type)}</p>
+      <p><strong>Severity:</strong> ${escapeHTML(incident.severity)}</p>
+      <p><strong>Status:</strong> ${escapeHTML(incident.status)}</p>
+      <p><strong>Reporter:</strong> ${escapeHTML(incident.reporter)}</p>
+      <p><strong>Created:</strong> ${new Date(incident.created).toLocaleString()}</p>
+      <p><strong>Description:</strong><br>${escapeHTML(incident.description)}</p>
+      <button class="ir-secondary" id="ir-close-details">Close Details</button>
+    `;
+    $("ir-close-details").onclick = () => panel.classList.remove("show");
+    panel.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+
+  $("ir-simulate").addEventListener("click", function () {
+    addIncident({
+      title:"Suspicious Phishing Email",
+      type:"Phishing",
+      severity:"High",
+      reporter:"Simulation System",
+      description:"A fictional phishing email was reported. Demo response: investigate sender, identify affected users, and quarantine the message."
+    });
+    toast("Phishing simulation created successfully!");
+  });
+
+  $("ir-clear-demo").addEventListener("click", function () {
+    if (!confirm("Delete all saved demo incidents from this dashboard?")) return;
+   incidents = [];
+saveData();
+$("ir-detail").classList.remove("show");
+
+logActivity("Demo Reset", "All demo incidents were cleared");
+
+render();
+toast("Demo incidents cleared.");
+  });
+
+  $("ir-filter").addEventListener("change", render);
+
+  $("ir-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    addIncident({
+      title:$("ir-title").value.trim(),
+      type:$("ir-type").value,
+      severity:$("ir-severity").value,
+      reporter:$("ir-reporter").value.trim() || "Anonymous",
+      description:$("ir-description").value.trim()
+    });
+
+    this.reset();
+    toast("Incident report submitted successfully!");
+  });
+
+  loadData();
+loadActivities();
+render();
+renderActivity();
+})();
+</script>
+
+<script src="js/security-core.js"></script>
+</body>
+</html>
